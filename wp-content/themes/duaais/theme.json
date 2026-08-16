@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1180px"
+    },
+    "color": {
+      "defaultPalette": false,
+      "palette": [
+        { "slug": "sweden-blue", "color": "#005293", "name": "Sweden blue" },
+        { "slug": "sweden-yellow", "color": "#fecb00", "name": "Sweden yellow" },
+        { "slug": "ink", "color": "#162321", "name": "Ink" },
+        { "slug": "forest", "color": "#1d5a4d", "name": "Forest" },
+        { "slug": "coral", "color": "#cc5945", "name": "Coral" },
+        { "slug": "paper", "color": "#f5f6f2", "name": "Paper" },
+        { "slug": "white", "color": "#ffffff", "name": "White" }
+      ]
+    },
+    "typography": {
+      "fluid": false,
+      "fontFamilies": [
+        {
+          "fontFamily": "\"Iowan Old Style\", \"Palatino Linotype\", Palatino, Georgia, serif",
+          "name": "Editorial serif",
+          "slug": "editorial-serif"
+        },
+        {
+          "fontFamily": "\"Avenir Next\", Avenir, \"Segoe UI\", sans-serif",
+          "name": "Humanist sans",
+          "slug": "humanist-sans"
+        }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "#f5f6f2",
+      "text": "#162321"
+    },
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--humanist-sans)",
+      "lineHeight": "1.7"
+    }
+  }
+}

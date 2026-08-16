@@ -1,0 +1,19 @@
+.duaais-honeypot {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+.duaais-members .member-form h2 {
+  font-size: 2rem;
+}
+
+.duaais-members .form-field [aria-hidden="true"] {
+  color: var(--error, #a72828);
+}
+
+.duaais-members .account-avatar img {
+  display: block;
+}

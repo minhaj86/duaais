@@ -1,0 +1,76 @@
+name: duaais
+
+services:
+  database:
+    image: mariadb:11.8
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${WORDPRESS_DB_NAME:-wordpress}
+      MARIADB_USER: ${WORDPRESS_DB_USER:-wordpress}
+      MARIADB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-local-root-password}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - database_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:6.8.2-php8.3-apache
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "${WORDPRESS_PORT:-8080}:80"
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG_LOG', true );
+        define( 'WP_DEBUG_DISPLAY', false );
+        @ini_set( 'display_errors', '0' );
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(@file_get_contents(\"http://localhost/wp-admin/install.php\") === false ? 1 : 0);'"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content/themes/duaais:/var/www/html/wp-content/themes/duaais
+      - ./wp-content/plugins/duaais-members:/var/www/html/wp-content/plugins/duaais-members
+
+  wpcli:
+    image: wordpress:cli-php8.3
+    profiles: ["tools"]
+    user: "33:33"
+    depends_on:
+      database:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      WORDPRESS_PORT: ${WORDPRESS_PORT:-8080}
+      SITE_URL: ${SITE_URL:-http://localhost:8080}
+      SITE_TITLE: ${SITE_TITLE:-DUAAIS Sweden}
+      WP_ADMIN_USER: ${WP_ADMIN_USER:-admin}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD:-change-this-local-password}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL:-admin@example.test}
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content/themes/duaais:/var/www/html/wp-content/themes/duaais
+      - ./wp-content/plugins/duaais-members:/var/www/html/wp-content/plugins/duaais-members
+      - ./scripts:/scripts:ro
+
+volumes:
+  database_data:
+  wordpress_data:
