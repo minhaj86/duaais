@@ -4,6 +4,7 @@ FROM wordpress:6.8.2-php8.3-apache
 # every start, so the theme and plugin are placed there rather than in /var/www/html.
 COPY --chown=www-data:www-data wp-content/themes/duaais /usr/src/wordpress/wp-content/themes/duaais
 COPY --chown=www-data:www-data wp-content/plugins/duaais-members /usr/src/wordpress/wp-content/plugins/duaais-members
+COPY --chown=www-data:www-data wp-content/plugins/duaais-setup /usr/src/wordpress/wp-content/plugins/duaais-setup
 
 # Members attach a DU certificate copy to their application, which the stock 2M upload limit blocks.
 COPY scripts/php-uploads.ini /usr/local/etc/php/conf.d/duaais-uploads.ini

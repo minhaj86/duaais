@@ -45,6 +45,7 @@ services:
       - ./scripts/php-uploads.ini:/usr/local/etc/php/conf.d/duaais-uploads.ini:ro
       - ./wp-content/themes/duaais:/var/www/html/wp-content/themes/duaais
       - ./wp-content/plugins/duaais-members:/var/www/html/wp-content/plugins/duaais-members
+      - ./wp-content/plugins/duaais-setup:/var/www/html/wp-content/plugins/duaais-setup
 
   wpcli:
     image: wordpress:cli-php8.3
@@ -70,6 +71,7 @@ services:
       - wordpress_data:/var/www/html
       - ./wp-content/themes/duaais:/var/www/html/wp-content/themes/duaais
       - ./wp-content/plugins/duaais-members:/var/www/html/wp-content/plugins/duaais-members
+      - ./wp-content/plugins/duaais-setup:/var/www/html/wp-content/plugins/duaais-setup
       - ./scripts:/scripts:ro
 
 volumes:

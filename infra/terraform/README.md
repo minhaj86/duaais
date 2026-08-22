@@ -7,7 +7,7 @@ Terraform in this directory deploys the DUAAIS Sweden WordPress site to Azure Co
 | Resource | Purpose |
 | --- | --- |
 | Container Apps environment | Runs the site, VNet integrated, HTTPS ingress with a managed certificate |
-| Container app | WordPress 6.8.2 on PHP 8.3 with the `duaais` theme and `duaais-members` plugin |
+| Container app | WordPress 6.8.2 on PHP 8.3 with the `duaais` theme and the `duaais-members` and `duaais-setup` plugins |
 | Container registry | Holds the image built from the repository `Dockerfile` |
 | MySQL flexible server | WordPress database, private access only, TLS required |
 | Storage account and file share | Persists `wp-content/uploads` across restarts and revisions |
@@ -38,7 +38,7 @@ terraform apply
 
 A single apply is enough. Terraform builds the container image with ACR Tasks (`az acr build`),
 creates the infrastructure, and the container bootstraps WordPress on first start: it installs
-core, activates the theme and plugin, and seeds the association pages using `scripts/bootstrap.sh`.
+core, activates the theme and plugins, and seeds the association pages using `scripts/bootstrap.sh`.
 
 Afterwards:
 
