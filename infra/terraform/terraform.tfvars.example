@@ -1,0 +1,27 @@
+# Copy to terraform.tfvars and adjust before the first apply.
+
+# Azure subscription to deploy into. Falls back to ARM_SUBSCRIPTION_ID when omitted.
+# subscription_id = "00000000-0000-0000-0000-000000000000"
+
+location    = "swedencentral"
+environment = "prod"
+
+# WordPress administrator created by the content bootstrap.
+wp_admin_email = "board@example.com"
+wp_admin_user  = "duaais-admin"
+# Leave wp_admin_password unset to have a strong password generated:
+#   terraform output -raw wp_admin_password
+# wp_admin_password = ""
+
+site_title = "DUAAIS Sweden"
+
+# Set once a custom domain is bound to the container app, for example "www.duaais.com".
+# custom_domain = ""
+
+# Database sizing. B_Standard_B1ms is the cheapest burstable tier.
+mysql_sku_name   = "B_Standard_B1ms"
+mysql_storage_gb = 32
+
+tags = {
+  owner = "duaais-board"
+}
