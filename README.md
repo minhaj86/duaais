@@ -34,6 +34,8 @@ The example administrator is `admin` with password `change-this-local-password`.
 
 - Publish and edit blog posts under **Posts** in WordPress.
 - Manage pages and navigation through the standard WordPress dashboard.
+- Re-create the DUAAIS pages, posts, menus, and site settings at any time from **Tools → DUAAIS
+  setup**, which runs the same idempotent seeder as `scripts/bootstrap.sh` without needing WP-CLI.
 - University of Dhaka alumni apply through **Join DUAAIS** and manage their contact details, DU subject, attested hall, examination year, residence status in Sweden, and certificate copy on **My Account**.
 - Member fields are stored as WordPress user metadata; no additional database tables are used.
 
@@ -72,6 +74,22 @@ gets the `Pending Alumni Member` role and still needs approval.
 
 Approval and rejection emails depend on working outbound mail. Configure SMTP before going live so
 that applicants and the board are notified.
+
+## Deploying to one.com
+
+one.com is shared hosting without Docker, Terraform, or SSH on the Beginner and Explorer plans, so
+WordPress is installed through the Control Panel and this repository supplies the theme and plugins.
+
+```sh
+cp .env.onecom.example .env.onecom
+# fill in the SFTP details from the one.com Control Panel
+./scripts/deploy-onecom.sh
+```
+
+Then activate the theme and both plugins in wp-admin and run **Tools → DUAAIS setup**, which
+executes the same content seeder that WP-CLI runs locally. See
+[`docs/deploy-onecom.md`](docs/deploy-onecom.md) for the database, PHP version, HTTPS, permalink,
+and SMTP steps.
 
 ## Deploying to Azure
 

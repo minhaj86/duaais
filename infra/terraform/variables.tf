@@ -85,7 +85,7 @@ variable "wordpress_debug" {
 }
 
 variable "run_bootstrap_on_start" {
-  description = "Run the idempotent scripts/bootstrap.sh content bootstrap when a container starts. It installs WordPress, activates the theme and plugin, and seeds the association pages."
+  description = "Run the idempotent scripts/bootstrap.sh content bootstrap when a container starts. It installs WordPress, activates the theme and plugins, and seeds the association pages."
   type        = bool
   default     = true
 }

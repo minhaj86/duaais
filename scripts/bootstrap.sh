@@ -20,8 +20,10 @@ fi
 
 $WP site switch-language en_US >/dev/null
 $WP theme activate duaais >/dev/null
-$WP plugin activate duaais-members >/dev/null
-$WP eval-file /scripts/seed.php
+$WP plugin activate duaais-members duaais-setup >/dev/null
+# The seeder ships inside duaais-setup so that hosting without WP-CLI can run the same file
+# from Tools -> DUAAIS setup.
+$WP eval-file /var/www/html/wp-content/plugins/duaais-setup/seed.php
 
 printf '\nDUAAIS Sweden is ready at %s\n' "$SITE_URL"
 printf 'WordPress admin: %s/wp-admin/\n' "$SITE_URL"

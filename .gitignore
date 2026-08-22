@@ -1,4 +1,5 @@
 .env
+.env.onecom
 .DS_Store
 *.log
 .idea/
