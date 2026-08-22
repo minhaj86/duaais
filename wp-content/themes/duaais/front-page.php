@@ -136,9 +136,9 @@ get_header();
 		<div class="content-shell join-layout">
 			<div>
 				<h2><?php esc_html_e( 'Are you a DU graduate living in Sweden?', 'duaais' ); ?></h2>
-				<p><?php esc_html_e( 'Create your free account and join Dhaka University Alumni Association in Sweden.', 'duaais' ); ?></p>
+				<p><?php esc_html_e( 'Apply for free membership in Dhaka University Alumni Association in Sweden. Attach your DU certificate and the board reviews your application.', 'duaais' ); ?></p>
 			</div>
-			<a class="button" href="<?php echo esc_url( duaais_page_url( 'bli-medlem' ) ); ?>"><?php esc_html_e( 'Create an alumni account', 'duaais' ); ?></a>
+			<a class="button" href="<?php echo esc_url( duaais_page_url( 'bli-medlem' ) ); ?>"><?php esc_html_e( 'Apply for membership', 'duaais' ); ?></a>
 		</div>
 	</section>
 </main>

@@ -42,6 +42,7 @@ services:
       retries: 30
     volumes:
       - wordpress_data:/var/www/html
+      - ./scripts/php-uploads.ini:/usr/local/etc/php/conf.d/duaais-uploads.ini:ro
       - ./wp-content/themes/duaais:/var/www/html/wp-content/themes/duaais
       - ./wp-content/plugins/duaais-members:/var/www/html/wp-content/plugins/duaais-members
 

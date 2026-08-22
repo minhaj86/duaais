@@ -293,8 +293,10 @@ update_option( 'date_format', 'F j, Y' );
 update_option( 'time_format', 'g:i a' );
 update_option( 'start_of_week', 1 );
 update_option( 'default_comment_status', 'open' );
-update_option( 'users_can_register', 1 );
-update_option( 'default_role', 'duaais_alumni' );
+// Membership goes through the reviewed [duaais_register] form, so the WordPress
+// registration screen stays closed and new accounts default to the pending role.
+update_option( 'users_can_register', 0 );
+update_option( 'default_role', 'duaais_pending' );
 update_option( 'permalink_structure', '/%postname%/' );
 
 $author_id = duaais_seed_author_id();
