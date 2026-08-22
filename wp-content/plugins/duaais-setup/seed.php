@@ -297,7 +297,11 @@ update_option( 'default_comment_status', 'open' );
 // registration screen stays closed and new accounts default to the pending role.
 update_option( 'users_can_register', 0 );
 update_option( 'default_role', 'duaais_pending' );
-update_option( 'permalink_structure', '/%postname%/' );
+
+// set_permalink_structure() also refreshes the loaded WP_Rewrite instance. Writing the option
+// directly would leave the rules built from the previous structure, so the flush at the end of
+// this file would save an empty mod_rewrite block on a fresh install.
+$GLOBALS['wp_rewrite']->set_permalink_structure( '/%postname%/' );
 
 $author_id = duaais_seed_author_id();
 wp_update_user(

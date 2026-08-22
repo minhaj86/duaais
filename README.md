@@ -78,18 +78,26 @@ that applicants and the board are notified.
 ## Deploying to one.com
 
 one.com is shared hosting without Docker, Terraform, or SSH on the Beginner and Explorer plans, so
-WordPress is installed through the Control Panel and this repository supplies the theme and plugins.
+this repository ships a deployment script instead of infrastructure code.
+
+Create the database, set the PHP version, and enable SFTP once in the one.com Control Panel, which
+has no API. Everything after that is scripted:
 
 ```sh
 cp .env.onecom.example .env.onecom
-# fill in the SFTP details from the one.com Control Panel
+# fill in the SFTP, database, and administrator details
+./scripts/deploy-onecom.sh --first-run
+```
+
+That installs WordPress core, writes `wp-config.php`, creates the administrator, uploads the theme
+and plugins, activates them, and seeds the content. Later updates are just:
+
+```sh
 ./scripts/deploy-onecom.sh
 ```
 
-Then activate the theme and both plugins in wp-admin and run **Tools → DUAAIS setup**, which
-executes the same content seeder that WP-CLI runs locally. See
-[`docs/deploy-onecom.md`](docs/deploy-onecom.md) for the database, PHP version, HTTPS, permalink,
-and SMTP steps.
+See [`docs/deploy-onecom.md`](docs/deploy-onecom.md) for the Control Panel steps and for the HTTPS
+and SMTP configuration that stays manual.
 
 ## Deploying to Azure
 
