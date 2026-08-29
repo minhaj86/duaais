@@ -96,6 +96,16 @@ and plugins, activates them, and seeds the content. Later updates are just:
 ./scripts/deploy-onecom.sh
 ```
 
+If you would rather not enable SFTP, the site can be deployed from a browser instead. Build
+installable archives and upload them through wp-admin:
+
+```sh
+./scripts/package.sh   # writes dist/duaais-*.zip, one per theme and plugin
+```
+
+Install them under **Appearance → Themes → Add New** and **Plugins → Add New**, then run
+**Tools → DUAAIS setup** to create the content.
+
 See [`docs/deploy-onecom.md`](docs/deploy-onecom.md) for the Control Panel steps and for the HTTPS
 and SMTP configuration that stays manual.
 

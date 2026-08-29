@@ -26,6 +26,10 @@ the Control Panel has to be clicked once by a human. Everything after that is sc
 | Seed pages, posts, images, menus, and settings | `--first-run` |
 | Force HTTPS, configure SMTP | manual, once |
 
+Enabling SFTP is optional. If you would rather not, [deploy from the browser
+instead](#deploying-without-sftp) — the whole site can be installed through the Control Panel file
+manager and wp-admin.
+
 ## What one.com provides
 
 | Requirement | one.com |
@@ -50,9 +54,10 @@ and `.user.ini` overrides are not supported there in any case.
 3. **Advanced settings → SFTP & SSH administration:** switch SFTP on and set a password. The
    hostname, port, and username shown there are what the script connects with.
 
-Do **not** use the 1-click WordPress installer. `--first-run` installs core itself, and doing both
-means the script finds an installation it did not configure. If WordPress is already installed, the
-script detects that and skips straight to uploading and seeding.
+Do **not** use the 1-click WordPress installer if you intend to run `--first-run`. That mode installs
+core itself, and doing both means the script finds an installation it did not configure. If
+WordPress is already installed, the script detects that and skips straight to uploading and seeding.
+The browser-only route below does the opposite and starts from the 1-click installer.
 
 ## 2. Configure the deployment
 
@@ -147,7 +152,50 @@ There is no cron scheduler in the Control Panel on these plans. WordPress falls 
 `wp-cron.php` on page load, which is enough for a low-traffic site. For reliable scheduling, point
 an external cron service at `https://yourdomain.tld/wp-cron.php?doing_wp_cron`.
 
-## Updating the site later
+## Deploying without SFTP
+
+SFTP is what the script uses, but nothing here depends on it. The Control Panel file manager can
+upload and unzip archives, and wp-admin installs themes and plugins from ZIP files, so the site can
+be deployed entirely from a browser. This is also the fallback when the script cannot connect.
+
+Build the archives first:
+
+```sh
+./scripts/package.sh
+```
+
+That writes one ZIP per component into `dist/`, each holding a single correctly named folder, which
+is the layout WordPress requires. The three together are about 5 MB, far below the 256 MB upload
+limit and the file manager's 3 GB / 40 000 file unzip limit.
+
+### 1. Install WordPress
+
+- **Explorer plan or larger:** Control Panel → **1-click WordPress installation**. It creates the
+  database and `wp-config.php` for you, so the database step in section 1 is not needed either.
+- **Beginner plan**, which has no 1-click installer: create the database as in section 1, download
+  `wordpress.org/latest.zip`, upload it into the web root with the file manager, select it, click
+  **Unzip**, then move the contents of the extracted `wordpress` folder up into the web root. Open
+  the domain in a browser and complete the WordPress installer with the database credentials.
+
+### 2. Install the theme and the plugins
+
+In wp-admin:
+
+1. **Appearance → Themes → Add New → Upload Theme** — `duaais-<version>.zip`, then **Activate**.
+2. **Plugins → Add New → Upload Plugin** — `duaais-members-<version>.zip`, then **Activate**.
+3. The same for `duaais-setup-<version>.zip`.
+4. **Tools → DUAAIS setup → Run DUAAIS setup**, which creates every page, post, image, and menu and
+   applies the site settings. This screen exists precisely so that seeding never needs WP-CLI.
+
+Then continue from [Finish the setup by hand](#4-finish-the-setup-by-hand) — HTTPS, email, and the
+certificate check are the same either way.
+
+### Updating without SFTP
+
+Re-run `./scripts/package.sh` and upload the newer ZIP the same way. WordPress detects the existing
+copy and offers to replace it, so this works for upgrades as well as first installs.
+
+
 
 ```sh
 ./scripts/deploy-onecom.sh --dry-run   # requires lftp
@@ -170,12 +218,14 @@ Control Panel before large changes.
 
 - **Every page except the front page returns 404.** WordPress could not write the rewrite rules
   into the web root `.htaccess`. **Tools → DUAAIS setup** reports whether the file is writable and
-  prints the rules to paste. Saving **Settings → Permalinks** once has the same effect when the file
-  is writable.
+  prints the rules to paste; the file manager's editor opens `.htaccess` directly. Saving
+  **Settings → Permalinks** once has the same effect when the file is writable.
 - **The script cannot tell whether `wp-config.php` exists.** It stops rather than risk overwriting a
   working configuration. Check that `ONECOM_SITE_URL` points at the right domain.
 - **`--first-run` reports that the server could not fetch WordPress.** That is only a warning; the
   script uploads core over SFTP instead, which is slower but equivalent.
-- **Manual fallback.** The theme and plugins are ordinary WordPress extensions. They can be
-  uploaded through the Control Panel file manager and activated in wp-admin, and the content can be
-  created from **Tools → DUAAIS setup**, without using the script at all.
+- **Manual fallback.** Nothing here requires the script. The whole site can be installed from a
+  browser instead — see [Deploying without SFTP](#deploying-without-sftp).
+- **wp-admin asks for FTP credentials when installing a theme or plugin.** WordPress could not
+  write to `wp-content` directly. Add `define( 'FS_METHOD', 'direct' );` to `wp-config.php` above
+  the "stop editing" line, using the file manager's built-in editor.
