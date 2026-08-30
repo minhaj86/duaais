@@ -27,7 +27,8 @@ refresh gate both key off those constants.
 
 The Beginner and Explorer plans have no SSH, no WP-CLI, no cron, and no Docker. WordPress itself,
 the database, and `wp-config.php` are managed once through the Control Panel; this repository only
-supplies the theme and plugins. Full runbook: `docs/deploy-onecom.md`.
+supplies the theme and plugins. Use `docs/deploy-onecom-script.md` for the SFTP script or
+`docs/deploy-onecom-manual.md` for browser uploads; `docs/deploy-onecom.md` links both methods.
 
 ```sh
 cp .env.onecom.example .env.onecom     # first time; fill in from Control Panel → SFTP & SSH

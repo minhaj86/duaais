@@ -22,7 +22,9 @@ repository.
 | `scripts/deploy-onecom.sh` | Mirrors the theme and both plugins to one.com over SFTP (`lftp`, else OpenSSH `sftp`) |
 | `scripts/php-uploads.ini` | Raises `upload_max_filesize` to 8M for certificate uploads |
 | `infra/terraform/` | Azure Container Apps + MySQL flexible server + file share + ACR |
-| `docs/deploy-onecom.md` | Shared-hosting deployment runbook |
+| `docs/deploy-onecom.md` | Index for the scripted and manual one.com deployment runbooks |
+| `docs/deploy-onecom-script.md` | one.com deployment through the SFTP script |
+| `docs/deploy-onecom-manual.md` | one.com deployment through the file manager and wp-admin |
 | `Dockerfile`, `docker-compose.yml` | Deployable image and the local three-service stack |
 
 **Only the theme and the two plugins are deployable payload.** `scripts/deploy-onecom.sh` uploads
@@ -123,7 +125,8 @@ shared hosting there is no WP-CLI to recover with.
 - **one.com (shared hosting, primary):** `./scripts/deploy-onecom.sh` (use `--dry-run` first when
   `lftp` is available). Then activate the theme and both plugins in wp-admin and run
   **Tools → DUAAIS setup**. No SSH, no WP-CLI, no cron on the Beginner/Explorer plans — this is why
-  the seeder is duplicated into an admin screen. See `docs/deploy-onecom.md`.
+  the seeder is duplicated into an admin screen. See `docs/deploy-onecom-script.md`; the
+  browser-only alternative is in `docs/deploy-onecom-manual.md`.
 - **Azure:** `terraform -chdir=infra/terraform apply`, which builds and pushes the image. Keep the
   container app at a single replica; `duaais-entrypoint.sh` bootstraps in the background and assumes
   one bootstrapper.
@@ -138,5 +141,4 @@ shared hosting there is no WP-CLI to recover with.
 - Do not edit WordPress core or vendored core files; none are tracked here.
 - Do not touch `images/` or `wp-content/themes/duaais/assets/documents/` sources without updating
   `assets/images/CREDITS.md` / `assets/documents/SOURCES.md`.
-- Keep `README.md` and `docs/deploy-onecom.md` in step with behaviour changes; both are user-facing
-  runbooks.
+- Keep `README.md` and the `docs/deploy-onecom*.md` runbooks in step with behaviour changes.
