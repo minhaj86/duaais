@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DUAAIS_SEED_CONTENT_VERSION = '3.1.0';
+const DUAAIS_SEED_CONTENT_VERSION = '3.2.0';
 
 $GLOBALS['duaais_seed_refresh_content'] = version_compare(
 	(string) get_option( 'duaais_seed_content_version', '1.0.0' ),
@@ -375,8 +375,14 @@ $contact_content = <<<'HTML'
 <!-- wp:paragraph --><p>For membership questions, activities, partnerships, and website comments, email <a href="mailto:info@duaais.com">info@duaais.com</a>.</p><!-- /wp:paragraph -->
 <!-- wp:heading {"level":3} --><h3 class="wp-block-heading">Publisher and Editor</h3><!-- /wp:heading -->
 <!-- wp:paragraph --><p>Abul Kalam Bhuiyan<br><a href="mailto:abul.kalam@bhuiyan.se">abul.kalam@bhuiyan.se</a><br><a href="tel:+46706456125">+46 70 645 6125</a></p><!-- /wp:paragraph -->
-<!-- wp:paragraph --><p>Executive committee contacts are available on the <a href="/executive-committee/">Executive Committee page</a>.</p><!-- /wp:paragraph -->
 HTML;
+
+// Built from home_url() rather than hardcoded, so the link also resolves when WordPress is
+// installed under a subdirectory such as example.com/wproot.
+$contact_content .= sprintf(
+	"\n" . '<!-- wp:paragraph --><p>Executive committee contacts are available on the <a href="%s">Executive Committee page</a>.</p><!-- /wp:paragraph -->',
+	esc_url( home_url( '/executive-committee/' ) )
+);
 
 $privacy_content = <<<'HTML'
 <!-- wp:paragraph --><p><strong>Last updated: August 16, 2026.</strong></p><!-- /wp:paragraph -->

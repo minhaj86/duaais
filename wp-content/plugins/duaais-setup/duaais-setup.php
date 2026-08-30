@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DUAAIS Setup
  * Description: Runs the idempotent DUAAIS content bootstrap from wp-admin, for shared hosting without SSH or WP-CLI.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: DUAAIS Sweden

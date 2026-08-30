@@ -106,8 +106,9 @@ installable archives and upload them through wp-admin:
 Install them under **Appearance → Themes → Add New** and **Plugins → Add New**, then run
 **Tools → DUAAIS setup** to create the content.
 
-See [`docs/deploy-onecom.md`](docs/deploy-onecom.md) for the Control Panel steps and for the HTTPS
-and SMTP configuration that stays manual.
+See [`docs/deploy-onecom.md`](docs/deploy-onecom.md) for the Control Panel steps, for running the
+site under a subdirectory such as `duaais.com/wproot`, and for the HTTPS and SMTP configuration that
+stays manual.
 
 ## Deploying to Azure
 

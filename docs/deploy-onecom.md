@@ -5,8 +5,9 @@ image and the Azure configuration in [`infra/terraform`](../infra/terraform) are
 The site runs as an ordinary WordPress instance and this repository supplies the theme, the two
 plugins, and the content.
 
-SSH — and therefore WP-CLI — is only available on the Enthusiast and Guru plans. This guide assumes
-the smaller Beginner and Explorer plans and needs neither. It works unchanged on the larger plans.
+This guide is written for the **Beginner** plan, which has neither SSH nor the 1-click WordPress
+installer. SSH — and therefore WP-CLI — starts at Enthusiast, and the 1-click installer at Explorer.
+Nothing here needs either, so the guide works unchanged on the larger plans.
 
 ## How much is automated
 
@@ -32,15 +33,21 @@ manager and wp-admin.
 
 ## What one.com provides
 
-| Requirement | one.com |
+Everything the theme and plugins need is present on Beginner. The figures below are the documented
+Beginner limits; the larger plans only raise them.
+
+| Requirement | Beginner |
 | --- | --- |
-| PHP 8.1 or newer, required by the theme and plugins | PHP 8.0–8.5, selected per domain in the Control Panel |
-| MariaDB | Included; phpMyAdmin in the Control Panel |
-| Apache with `mod_rewrite` and `.htaccess` | Yes, which is what protects the certificate folder |
-| 8 MB certificate uploads | `upload_max_filesize` is fixed at 256 MB on every plan |
+| PHP 8.1 or newer, required by the theme and plugins | PHP 8.0–8.5, selected per domain and subdomain |
+| MariaDB | 1 database, which is all the site needs; phpMyAdmin included |
+| Apache with `mod_rewrite` and `.htaccess` | Both enabled, which is what protects the certificate folder |
+| 8 MB certificate uploads | `upload_max_filesize` and `post_max_size` are 256 MB |
+| Room for the seeder to run in one request | `memory_limit` 1 GB, `max_execution_time` 300 s |
 | HTTPS | Free Let's Encrypt wildcard certificate, issued automatically |
-| Outbound email | Mailboxes with SMTP on `send.one.com` |
-| SSH, WP-CLI, cron | Enthusiast and Guru plans only |
+| Outbound email | Unlimited mailboxes, SMTP on `send.one.com` |
+| File transfer | SFTP, on every plan |
+| SSH, WP-CLI, real cron | Enthusiast and Guru only |
+| 1-click WordPress installer | Explorer and larger, or the Managed WP add-on |
 
 Because the platform limits already exceed what the membership form needs,
 [`scripts/php-uploads.ini`](../scripts/php-uploads.ini) is irrelevant on one.com. Custom `php.ini`
@@ -49,15 +56,19 @@ and `.user.ini` overrides are not supported there in any case.
 ## 1. Prepare the Control Panel
 
 1. **Advanced settings → Database settings:** create a database. Note the name, user, password, and
-   host. The host is never `localhost`; it looks like `yourdomain.tld.mysql`.
-2. **Advanced settings → PHP:** set PHP 8.3 or newer for the domain.
-3. **Advanced settings → SFTP & SSH administration:** switch SFTP on and set a password. The
-   hostname, port, and username shown there are what the script connects with.
+   host. The host is never `localhost`; it looks like `yourdomain.tld.mysql`. Beginner includes
+   exactly one database, so if something else already uses it, give WordPress its own
+   `ONECOM_TABLE_PREFIX` rather than a second database.
+2. **Advanced settings → PHP:** set PHP 8.3 or newer for the domain, and for the subdomain too if
+   the site runs on one.
+3. **Advanced settings → SFTP & SSH administration:** switch SFTP on and set a password. SFTP is
+   included on Beginner even though SSH is not. The hostname, port, and username shown there are
+   what the script connects with.
 
-Do **not** use the 1-click WordPress installer if you intend to run `--first-run`. That mode installs
-core itself, and doing both means the script finds an installation it did not configure. If
-WordPress is already installed, the script detects that and skips straight to uploading and seeding.
-The browser-only route below does the opposite and starts from the 1-click installer.
+Beginner has no 1-click WordPress installer, so `--first-run` installs core itself — which is the
+path this guide takes, and the reason the database has to exist first. On Explorer and larger, do
+not run both: if WordPress is already installed the script detects that and skips straight to
+uploading and seeding.
 
 ## 2. Configure the deployment
 
@@ -111,7 +122,7 @@ one deployment. If the script ever reports that it is still reachable, delete
 ### Force HTTPS
 
 The Let's Encrypt wildcard certificate is issued automatically, but the redirect is not. Add this
-above the `# BEGIN WordPress` block in the web root `.htaccess`:
+to the web root `.htaccess`, above the `# BEGIN WordPress` block if there is one:
 
 ```apache
 RewriteEngine On
@@ -142,9 +153,9 @@ membership applications, or hook the `duaais_members_admin_email` filter.
 ### Verify the certificate store
 
 The membership plugin creates `wp-content/uploads/duaais-certificates/` with an `.htaccess` that
-denies direct access. After the first application, request the file directly in a browser and
-confirm the server answers 403. one.com disables some Apache directives, so this is worth checking
-rather than assuming.
+denies direct access. `deny from all` is supported — one.com's own WordPress hardening guide
+recommends it — but one.com does disable some Apache directives without listing which, so after the
+first application request the file directly in a browser and confirm the server answers 403.
 
 ### Scheduled tasks
 
@@ -170,12 +181,18 @@ limit and the file manager's 3 GB / 40 000 file unzip limit.
 
 ### 1. Install WordPress
 
-- **Explorer plan or larger:** Control Panel → **1-click WordPress installation**. It creates the
-  database and `wp-config.php` for you, so the database step in section 1 is not needed either.
-- **Beginner plan**, which has no 1-click installer: create the database as in section 1, download
-  `wordpress.org/latest.zip`, upload it into the web root with the file manager, select it, click
-  **Unzip**, then move the contents of the extracted `wordpress` folder up into the web root. Open
-  the domain in a browser and complete the WordPress installer with the database credentials.
+On Beginner there is no 1-click installer, so core goes up by hand — once:
+
+1. Create the database as in [Prepare the Control Panel](#1-prepare-the-control-panel).
+2. Download `https://wordpress.org/latest.zip`.
+3. In the file manager, open the web root, upload `latest.zip`, select it, and click **Unzip**.
+4. Move the contents of the extracted `wordpress` folder up into the web root, then delete the empty
+   `wordpress` folder and the ZIP.
+5. Open the domain in a browser and complete the WordPress installer with the database credentials.
+   It writes `wp-config.php` itself.
+
+On Explorer and larger you can use **Control Panel → 1-click WordPress installation** instead, which
+also creates the database.
 
 ### 2. Install the theme and the plugins
 
@@ -195,7 +212,38 @@ certificate check are the same either way.
 Re-run `./scripts/package.sh` and upload the newer ZIP the same way. WordPress detects the existing
 copy and offers to replace it, so this works for upgrades as well as first installs.
 
+## Installing under a subdirectory
 
+The site does not have to sit at the domain root. To serve it from `https://duaais.com/wproot`,
+point both settings at the same subdirectory:
+
+```sh
+ONECOM_REMOTE_ROOT=httpd.www/wproot
+ONECOM_SITE_URL=https://duaais.com/wproot
+```
+
+The script creates the folder if it is missing, and `--first-run` warns when the two disagree,
+because a mismatch would upload a whole WordPress into the wrong place. The generated
+`wp-config.php` pins `WP_SITEURL` and `WP_HOME` to that address, so the subdirectory is recorded at
+install time instead of being guessed from the request.
+
+Three things move with the site:
+
+- The WordPress `.htaccess` is `wproot/.htaccess`, not the one in the web root. WordPress writes
+  `RewriteBase /wproot/` into it by itself.
+- Every address in this guide gains the same prefix, including
+  `https://duaais.com/wproot/wp-admin/`.
+- Certificates still land in `wp-content/uploads/duaais-certificates/`, now inside `wproot`. The
+  generated `.htaccess` there is relative and needs no change.
+
+Anything already published at the domain root keeps working, and the HTTPS redirect above can stay
+in the web root `.htaccess` because it preserves the request path.
+
+For the browser route on Beginner, create `wproot` in the file manager first and unzip WordPress
+inside it rather than in the web root. On Explorer and larger the 1-click installer asks which
+folder to use. Everything after that is unchanged.
+
+## Updating the site later
 
 ```sh
 ./scripts/deploy-onecom.sh --dry-run   # requires lftp
@@ -217,9 +265,9 @@ Control Panel before large changes.
 ## If something goes wrong
 
 - **Every page except the front page returns 404.** WordPress could not write the rewrite rules
-  into the web root `.htaccess`. **Tools → DUAAIS setup** reports whether the file is writable and
-  prints the rules to paste; the file manager's editor opens `.htaccess` directly. Saving
-  **Settings → Permalinks** once has the same effect when the file is writable.
+  into the `.htaccess` beside `wp-config.php`. **Tools → DUAAIS setup** reports whether the file is
+  writable and prints the rules to paste; the file manager's editor opens `.htaccess` directly.
+  Saving **Settings → Permalinks** once has the same effect when the file is writable.
 - **The script cannot tell whether `wp-config.php` exists.** It stops rather than risk overwriting a
   working configuration. Check that `ONECOM_SITE_URL` points at the right domain.
 - **`--first-run` reports that the server could not fetch WordPress.** That is only a warning; the

@@ -296,6 +296,21 @@ generate_salts() {
 	done
 }
 
+# Returns the path component of a URL, without a trailing slash, or an empty string when there is
+# none. Used to keep the upload target and the public address consistent.
+url_path() {
+	local rest="${1#*://}"
+	case "$rest" in
+		*/*)
+			rest="/${rest#*/}"
+			printf '%s' "${rest%/}"
+			;;
+		*)
+			printf ''
+			;;
+	esac
+}
+
 write_wp_config() {
 	cat > "$1" <<PHP
 <?php
@@ -316,6 +331,11 @@ $(generate_salts)
 define( 'WP_DEBUG', false );
 define( 'DISALLOW_FILE_EDIT', true );
 define( 'WP_AUTO_UPDATE_CORE', 'minor' );
+
+// Pinned rather than guessed from the request, so that HTTPS behind one.com's proxy and any
+// subdirectory in the address are both recorded correctly at install time.
+define( 'WP_SITEURL', '$(php_quote "$ONECOM_SITE_URL")' );
+define( 'WP_HOME', '$(php_quote "$ONECOM_SITE_URL")' );
 
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
@@ -439,6 +459,21 @@ if [ "$first_run" = "yes" ]; then
 	require_config ONECOM_SITE_URL
 	ONECOM_SITE_URL="${ONECOM_SITE_URL%/}"
 	bootstrap_url="$ONECOM_SITE_URL/duaais-bootstrap.php"
+
+	# A subdirectory install only works when the upload target and the public path agree, and
+	# getting this wrong uploads a whole WordPress into the wrong folder. Warn before that happens.
+	site_path="$(url_path "$ONECOM_SITE_URL")"
+	if [ -n "$site_path" ]; then
+		case "${ONECOM_REMOTE_ROOT%/}" in
+			*"$site_path")
+				;;
+			*)
+				printf 'Warning: ONECOM_SITE_URL ends in %s but ONECOM_REMOTE_ROOT is %s.\n' \
+					"$site_path" "$ONECOM_REMOTE_ROOT" >&2
+				printf 'For a subdirectory install the remote root must end in %s too.\n' "$site_path" >&2
+				;;
+		esac
+	fi
 
 	printf 'Checking %s\n' "$ONECOM_SITE_URL"
 	core_status="$(http_status "$ONECOM_SITE_URL/wp-includes/version.php")"
