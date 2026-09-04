@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DUAAIS Members
  * Description: Front-end registration with DU certificate upload, board approval, login, and profile management for University of Dhaka alumni in Sweden.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: DUAAIS Sweden
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DUAAIS_MEMBERS_VERSION = '1.1.0';
+const DUAAIS_MEMBERS_VERSION = '1.1.1';
 const DUAAIS_MEMBER_ROLE     = 'duaais_alumni';
 const DUAAIS_PENDING_ROLE    = 'duaais_pending';
 
@@ -720,7 +720,6 @@ function duaais_members_registration_shortcode() {
 			<h2><?php esc_html_e( 'Join the DU community in Sweden', 'duaais-members' ); ?></h2>
 			<p><?php esc_html_e( 'Membership is for University of Dhaka graduates who currently reside in Sweden.', 'duaais-members' ); ?></p>
 			<p><?php esc_html_e( 'Complete the membership application and attach a copy of your DU certificate. The board reviews every application before the account is activated.', 'duaais-members' ); ?></p>
-			<p><?php esc_html_e( 'Membership is free.', 'duaais-members' ); ?></p>
 		</div>
 
 		<form class="member-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" enctype="multipart/form-data">
