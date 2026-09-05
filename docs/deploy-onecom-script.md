@@ -2,9 +2,9 @@
 
 one.com is shared hosting. It has no Docker, no Terraform, and no Git deployment, so the container
 image and the Azure configuration in [`infra/terraform`](../infra/terraform) are not used here.
-The site runs as an ordinary WordPress instance and this repository supplies the theme, the two
-plugins, and the content. This guide uses `scripts/deploy-onecom.sh` over SFTP. For a browser-only
-installation, use the [manual upload guide](deploy-onecom-manual.md).
+The site runs as an ordinary WordPress instance and this repository supplies the theme, three
+custom plugins, and the content. This guide uses `scripts/deploy-onecom.sh` over SFTP. For a
+browser-only installation, use the [manual upload guide](deploy-onecom-manual.md).
 
 This guide is written for the **Beginner** plan, which has neither SSH nor the 1-click WordPress
 installer. SSH — and therefore WP-CLI — starts at Enthusiast, and the 1-click installer at Explorer.
@@ -23,8 +23,9 @@ the Control Panel has to be clicked once by a human. Everything after that is sc
 | Install WordPress core | `--first-run` |
 | Write `wp-config.php` with fresh salts | `--first-run` |
 | Create the database tables and the administrator | `--first-run` |
-| Upload the theme and both plugins | script |
-| Activate the theme and plugins | `--first-run` |
+| Upload the theme and all three plugins | script |
+| Activate the theme and required plugins | `--first-run` |
+| Show or hide the anniversary flyer | Plugins screen |
 | Seed pages, posts, images, menus, and settings | `--first-run` |
 | Force HTTPS, configure SMTP | manual, once |
 
@@ -97,11 +98,12 @@ The script:
 
 1. Probes the site to see whether core, `wp-config.php`, and the database tables already exist.
 2. Uploads a one-time bootstrap file with a random token, `wp-config.php` when it is missing, and
-   the theme and both plugins — all in a single SFTP session.
+   the theme and all three plugins — all in a single SFTP session.
 3. Tells the server to download and unpack WordPress, verifying the published sha1 checksum. If the
    server cannot reach wordpress.org, the script downloads the archive itself and uploads it.
 4. Creates the database tables and the administrator account.
-5. Activates the DUAAIS theme and the two plugins.
+5. Activates the DUAAIS theme and the two required plugins. The optional anniversary plugin keeps
+   its existing activation state.
 6. Runs [`seed.php`](../wp-content/plugins/duaais-setup/seed.php), the same seeder that WP-CLI runs
    locally, which creates the pages, posts with featured images, categories, both navigation menus,
    and the site settings.
@@ -115,6 +117,12 @@ one deployment. If the script ever reports that it is still reachable, delete
 `duaais-bootstrap.php` from the web root over SFTP.
 
 ## 4. Finish the setup by hand
+
+### Anniversary flyer
+
+Open **Plugins** and activate **DUAAIS Anniversary Flyer** when the 30th anniversary promotion
+should appear on the homepage. Deactivate the plugin to hide it. Later deployments update its files
+without changing that activation choice.
 
 ### Force HTTPS
 

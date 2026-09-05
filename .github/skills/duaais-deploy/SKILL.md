@@ -6,8 +6,9 @@ description: Ship the DUAAIS theme and plugins to one.com shared hosting over SF
 # Deploy DUAAIS
 
 Two very different targets share one payload: `wp-content/themes/duaais`,
-`wp-content/plugins/duaais-members`, and `wp-content/plugins/duaais-setup`. Nothing else is deployed
-code. If a change has to reach production, it must land in one of those three directories.
+`wp-content/plugins/duaais-anniversary`, `wp-content/plugins/duaais-members`, and
+`wp-content/plugins/duaais-setup`. Nothing else is deployed code. If a change has to reach
+production, it must land in one of those four directories.
 
 ## Before either deployment
 
@@ -50,6 +51,7 @@ After upload, in wp-admin:
 1. **Appearance → Themes** — activate *DUAAIS Sweden*.
 2. **Plugins** — activate *DUAAIS Members* and *DUAAIS Setup*.
 3. **Tools → DUAAIS setup** — run the content bootstrap (this replaces `scripts/bootstrap.sh`).
+4. **Plugins** — activate *DUAAIS Anniversary Flyer* only while the homepage promotion is needed.
 
 Then verify: front page renders, an interior page loads (404s everywhere but the front page mean a
 read-only `.htaccess` blocked the permalink rules), **Join DUAAIS** submits, the approval email

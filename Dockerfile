@@ -1,8 +1,9 @@
 FROM wordpress:6.8.2-php8.3-apache
 
 # The entrypoint of the official image seeds /var/www/html from /usr/src/wordpress on
-# every start, so the theme and plugin are placed there rather than in /var/www/html.
+# every start, so the theme and plugins are placed there rather than in /var/www/html.
 COPY --chown=www-data:www-data wp-content/themes/duaais /usr/src/wordpress/wp-content/themes/duaais
+COPY --chown=www-data:www-data wp-content/plugins/duaais-anniversary /usr/src/wordpress/wp-content/plugins/duaais-anniversary
 COPY --chown=www-data:www-data wp-content/plugins/duaais-members /usr/src/wordpress/wp-content/plugins/duaais-members
 COPY --chown=www-data:www-data wp-content/plugins/duaais-setup /usr/src/wordpress/wp-content/plugins/duaais-setup
 

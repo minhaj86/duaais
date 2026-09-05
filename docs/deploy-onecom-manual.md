@@ -5,7 +5,7 @@ wp-admin. It does not require SFTP, SSH, WP-CLI, Docker, or the deployment scrip
 SFTP deployment, use the [script guide](deploy-onecom-script.md).
 
 one.com runs the site as an ordinary WordPress instance. This repository supplies only the DUAAIS
-theme, the two plugins, and the seeded content.
+theme, three custom plugins, and the seeded content.
 
 ## What one.com provides
 
@@ -42,11 +42,12 @@ From the repository root, run:
 ./scripts/package.sh
 ```
 
-This creates three versioned ZIP archives in `dist/`:
+This creates four versioned ZIP archives in `dist/`:
 
 - `duaais-<version>.zip`
 - `duaais-members-<version>.zip`
 - `duaais-setup-<version>.zip`
+- `duaais-anniversary-<version>.zip`
 
 Each archive contains one correctly named top-level folder, as WordPress requires.
 
@@ -73,10 +74,15 @@ In wp-admin:
 2. Open **Plugins -> Add New -> Upload Plugin**, upload `duaais-members-<version>.zip`, and activate
    **DUAAIS Members**.
 3. Upload `duaais-setup-<version>.zip` the same way and activate **DUAAIS Setup**.
-4. Open **Tools -> DUAAIS setup** and click **Run DUAAIS setup**.
+4. Upload `duaais-anniversary-<version>.zip` the same way. Activate **DUAAIS Anniversary Flyer**
+   only when the homepage flyer should be visible.
+5. Open **Tools -> DUAAIS setup** and click **Run DUAAIS setup**.
 
 The setup screen creates the pages, posts, featured images, categories, menus, and site settings.
 It is idempotent and replaces the WP-CLI bootstrap on shared hosting.
+
+Deactivate **DUAAIS Anniversary Flyer** under **Plugins** whenever the promotion should be hidden.
+The theme, flyer announcement, and other site content remain unchanged.
 
 ## 5. Finish the setup
 
@@ -159,6 +165,6 @@ large changes.
   manager editor.
 - **WordPress rejects an archive.** Confirm that it came from `./scripts/package.sh` and that you
   used the theme upload screen for `duaais-<version>.zip` and the plugin upload screen for the other
-  two archives.
+  three archives.
 - **The live site still shows an old version.** Check the installed version in wp-admin, clear any
   one.com cache, and confirm that WordPress replaced the existing theme or plugin.

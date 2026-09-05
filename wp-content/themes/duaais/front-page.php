@@ -20,6 +20,12 @@ get_header();
 				<a class="button button-highlight" href="<?php echo esc_url( duaais_page_url( 'bli-medlem' ) ); ?>"><?php esc_html_e( 'Join the association', 'duaais' ); ?></a>
 				<a class="button button-secondary" href="<?php echo esc_url( duaais_page_url( 'om-foreningen' ) ); ?>"><?php esc_html_e( 'About DUAAIS', 'duaais' ); ?></a>
 			</div>
+			<?php
+			/**
+			 * Fires after the homepage hero copy.
+			 */
+			do_action( 'duaais_home_hero_after_content' );
+			?>
 		</div>
 	</section>
 

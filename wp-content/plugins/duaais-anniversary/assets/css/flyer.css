@@ -1,0 +1,247 @@
+.hero-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  align-items: center;
+  column-gap: clamp(2.5rem, 5vw, 5rem);
+}
+
+.hero-content > :not(.anniversary-flyer) {
+  grid-column: 1;
+}
+
+.anniversary-flyer {
+  grid-column: 2;
+  grid-row: 1 / span 5;
+  width: 100%;
+  max-width: 400px;
+  align-self: center;
+  justify-self: end;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 34%);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 28px 70px rgb(0 0 0 / 32%);
+  animation-delay: 400ms;
+}
+
+.anniversary-art {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: 215px;
+  padding: 1.5rem;
+  place-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, transparent 46%, rgb(254 203 0 / 14%) 46%, rgb(254 203 0 / 14%) 54%, transparent 54%),
+    radial-gradient(circle at 20% 15%, rgb(255 255 255 / 18%), transparent 10rem),
+    var(--blue);
+  color: var(--white);
+}
+
+.anniversary-art::before,
+.anniversary-art::after {
+  position: absolute;
+  z-index: -1;
+  border: 2px solid rgb(255 255 255 / 16%);
+  border-radius: 50%;
+  content: "";
+}
+
+.anniversary-art::before {
+  top: -5rem;
+  left: -5rem;
+  width: 14rem;
+  height: 14rem;
+}
+
+.anniversary-art::after {
+  right: -6rem;
+  bottom: -6rem;
+  width: 17rem;
+  height: 17rem;
+}
+
+.anniversary-mark {
+  position: relative;
+  display: flex;
+  width: 185px;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  border: 2px solid rgb(255 255 255 / 72%);
+  border-radius: 50%;
+  flex-direction: column;
+  text-align: center;
+}
+
+.anniversary-mark::before {
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgb(254 203 0 / 72%);
+  border-radius: inherit;
+  content: "";
+}
+
+.anniversary-year-range,
+.anniversary-unit {
+  position: relative;
+  z-index: 1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.anniversary-number {
+  position: relative;
+  z-index: 1;
+  margin-block: -0.04em;
+  color: var(--yellow);
+  font-family: var(--font-display);
+  font-size: 6.5rem;
+  font-weight: 600;
+  letter-spacing: -0.08em;
+  line-height: 0.82;
+}
+
+.anniversary-copy {
+  padding: 1.75rem;
+}
+
+.anniversary-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
+  color: var(--blue);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.anniversary-kicker::before {
+  width: 1.75rem;
+  height: 3px;
+  background: var(--yellow);
+  content: "";
+}
+
+.anniversary-copy h2 {
+  margin-bottom: 0.35em;
+  font-size: 2.2rem;
+}
+
+.anniversary-event-name {
+  margin-bottom: 1.25rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.anniversary-event-name strong,
+.anniversary-event-name span {
+  display: block;
+}
+
+.anniversary-event-name strong {
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.anniversary-event-name span {
+  font-size: 0.86rem;
+}
+
+.anniversary-date {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding-block: 1rem;
+  margin-bottom: 1.4rem;
+  border-block: 1px solid var(--line);
+}
+
+.anniversary-date > strong {
+  color: var(--blue);
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 600;
+  line-height: 0.85;
+}
+
+.anniversary-date span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.anniversary-date b {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+
+.anniversary-date small {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.anniversary-copy .button {
+  width: 100%;
+}
+
+@media (max-width: 1040px) {
+  .hero-content {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    column-gap: 2.5rem;
+  }
+
+  .anniversary-art {
+    min-height: 190px;
+  }
+
+  .anniversary-mark {
+    width: 165px;
+  }
+
+  .anniversary-number {
+    font-size: 5.7rem;
+  }
+
+  .anniversary-copy {
+    padding: 1.5rem;
+  }
+
+  .anniversary-copy h2 {
+    font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 820px) {
+  .hero-content {
+    display: block;
+  }
+
+  .anniversary-flyer {
+    display: grid;
+    max-width: 680px;
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+    margin-top: 3rem;
+    margin-inline: auto;
+  }
+
+  .anniversary-art {
+    min-height: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .anniversary-flyer {
+    display: block;
+  }
+
+  .anniversary-art {
+    min-height: 210px;
+  }
+}

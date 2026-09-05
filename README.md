@@ -36,6 +36,8 @@ The example administrator is `admin` with password `change-this-local-password`.
 - Manage pages and navigation through the standard WordPress dashboard.
 - Re-create the DUAAIS pages, posts, menus, and site settings at any time from **Tools → DUAAIS
   setup**, which runs the same idempotent seeder as `scripts/bootstrap.sh` without needing WP-CLI.
+- Show or hide the 30th anniversary homepage flyer by activating or deactivating **DUAAIS
+  Anniversary Flyer** under **Plugins**. Deployments upload the plugin but do not force its status.
 - University of Dhaka alumni apply through **Join DUAAIS** and manage their contact details, DU subject, attested hall, examination year, residence status in Sweden, and certificate copy on **My Account**.
 - Member fields are stored as WordPress user metadata; no additional database tables are used.
 
@@ -90,7 +92,9 @@ cp .env.onecom.example .env.onecom
 ```
 
 That installs WordPress core, writes `wp-config.php`, creates the administrator, uploads the theme
-and plugins, activates them, and seeds the content. Later updates are just:
+and all three plugins, activates the theme and two required plugins, and seeds the content. Activate
+the optional **DUAAIS Anniversary Flyer** plugin in wp-admin whenever the flyer should be visible.
+Later updates are just:
 
 ```sh
 ./scripts/deploy-onecom.sh
@@ -104,7 +108,8 @@ installable archives and upload them through wp-admin:
 ```
 
 Install them under **Appearance → Themes → Add New** and **Plugins → Add New**, then run
-**Tools → DUAAIS setup** to create the content.
+**Tools → DUAAIS setup** to create the content. The anniversary plugin can remain inactive until the
+homepage flyer is needed.
 
 Use the [script deployment guide](docs/deploy-onecom-script.md) for SFTP automation or the
 [manual upload guide](docs/deploy-onecom-manual.md) for a browser-only installation. The
@@ -114,7 +119,8 @@ Use the [script deployment guide](docs/deploy-onecom-script.md) for SFTP automat
 
 Terraform under [`infra/terraform`](infra/terraform) deploys the site to Azure Container Apps with
 Azure Database for MySQL flexible server, an Azure file share for uploaded media, and a container
-registry holding an image with the theme and plugin baked in.
+registry holding an image with the theme and all three plugins baked in. The anniversary plugin
+remains controlled through the WordPress **Plugins** screen.
 
 ```sh
 cd infra/terraform

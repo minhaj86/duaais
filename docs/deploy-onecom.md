@@ -15,6 +15,7 @@ ZIP archives and uploads them through wp-admin.
 Both methods deploy only:
 
 - `wp-content/themes/duaais/`
+- `wp-content/plugins/duaais-anniversary/` (optional; activation controls the homepage flyer)
 - `wp-content/plugins/duaais-members/`
 - `wp-content/plugins/duaais-setup/`
 

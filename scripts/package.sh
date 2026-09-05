@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build installable ZIP archives of the theme and the two plugins.
+# Build installable ZIP archives of the theme and plugins.
 #
 # wp-admin and the one.com file manager both accept ZIP uploads, so these archives are what makes
 # a deployment possible without SFTP. Each archive contains exactly one top-level folder named
@@ -19,6 +19,7 @@ payload=(
 	"wp-content/themes/duaais"
 	"wp-content/plugins/duaais-members"
 	"wp-content/plugins/duaais-setup"
+	"wp-content/plugins/duaais-anniversary"
 )
 
 # Read the Version header out of style.css or the plugin bootstrap file.
@@ -76,7 +77,9 @@ Install them in wp-admin, in this order:
   1. Appearance -> Themes -> Add New -> Upload Theme      duaais-*.zip, then Activate.
   2. Plugins -> Add New -> Upload Plugin                  duaais-members-*.zip, then Activate.
   3. Plugins -> Add New -> Upload Plugin                  duaais-setup-*.zip, then Activate.
-  4. Tools -> DUAAIS setup -> Run DUAAIS setup.
+  4. Plugins -> Add New -> Upload Plugin                  duaais-anniversary-*.zip.
+  5. Tools -> DUAAIS setup -> Run DUAAIS setup.
+  6. Activate "DUAAIS Anniversary Flyer" whenever the homepage flyer is needed.
 
 Uploading a newer archive over an existing install is fine; WordPress asks to replace it.
 NEXT

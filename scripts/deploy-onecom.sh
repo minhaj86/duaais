@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Deploy the DUAAIS site to one.com shared hosting over SFTP.
 #
-# Without arguments the script uploads the theme and the plugins, which is all a running site
-# needs. With --first-run it also installs WordPress core, writes wp-config.php, creates the
-# administrator, activates everything, and seeds the content, so a fresh web space ends up as a
-# finished site in one command.
+# Without arguments the script uploads the theme and plugins, which is all a running site needs.
+# With --first-run it also installs WordPress core, writes wp-config.php, creates the administrator,
+# activates the required theme and plugins, and seeds the content. Optional plugins remain under
+# administrator control.
 #
 # The one.com Control Panel has no API, so creating the database, choosing the PHP version, and
 # enabling SFTP stay manual. See docs/deploy-onecom.md.
@@ -44,13 +44,12 @@ usage() {
 	cat <<'USAGE'
 Usage: scripts/deploy-onecom.sh [--first-run] [--dry-run] [--sftp]
 
-Uploads wp-content/themes/duaais, wp-content/plugins/duaais-members, and
-wp-content/plugins/duaais-setup to a one.com web space.
+Uploads wp-content/themes/duaais and the DUAAIS plugins to a one.com web space.
 
 Options:
   --first-run  Also install WordPress core, write wp-config.php, create the administrator,
-               activate the theme and plugins, and seed the content. Safe to repeat: every
-               step is skipped when it is already done.
+               activate the required theme and plugins, and seed the content. Safe to repeat:
+               every step is skipped when it is already done.
   --dry-run    Show what would be transferred without writing anything. Requires lftp.
   --sftp       Use OpenSSH sftp even when lftp is installed. Uploads without deleting
                files that were removed from the repository.
@@ -115,6 +114,7 @@ require_config ONECOM_HOST ONECOM_USER
 # Local directory -> path below the web root.
 payload=(
 	"wp-content/themes/duaais"
+	"wp-content/plugins/duaais-anniversary"
 	"wp-content/plugins/duaais-members"
 	"wp-content/plugins/duaais-setup"
 )
@@ -545,6 +545,7 @@ Upload finished. In wp-admin:
   1. Appearance -> Themes: activate "DUAAIS Sweden".
   2. Plugins: activate "DUAAIS Members" and "DUAAIS Setup".
   3. Tools -> DUAAIS setup: run the content bootstrap.
+  4. Plugins: activate "DUAAIS Anniversary Flyer" when the homepage flyer is needed.
 NEXT
 	exit 0
 fi
@@ -567,13 +568,16 @@ if [ "$needs_install" = "yes" ]; then
 		-d "admin_email=$ONECOM_WP_ADMIN_EMAIL"
 fi
 
-run_step activate "Activating the theme and plugins"
+run_step activate "Activating the theme and required plugins"
 run_step seed "Seeding the DUAAIS content"
 remove_bootstrap || true
 
 cat <<NEXT
 
 $ONECOM_SITE_URL is live. Sign in at $ONECOM_SITE_URL/wp-admin/
+
+Activate "DUAAIS Anniversary Flyer" under Plugins when the homepage flyer is needed.
+Deactivate it there to hide the flyer.
 
 Still manual, because the one.com Control Panel has no API:
   1. Force HTTPS by adding the redirect to .htaccess in the web root.
