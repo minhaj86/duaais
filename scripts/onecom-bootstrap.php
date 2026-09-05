@@ -281,7 +281,7 @@ if ( 'install' === $duaais_step ) {
 		exit;
 	}
 
-	$title    = duaais_bootstrap_input( 'title', 'DUAAIS Sweden' );
+	$title    = duaais_bootstrap_input( 'title', 'Dhaka University Alumni Association In Sweden' );
 	$user     = duaais_bootstrap_input( 'admin_user' );
 	$email    = duaais_bootstrap_input( 'admin_email' );
 	$password = duaais_bootstrap_input( 'admin_password' );

@@ -2,10 +2,10 @@
 /**
  * Plugin Name: DUAAIS Setup
  * Description: Runs the idempotent DUAAIS content bootstrap from wp-admin, for shared hosting without SSH or WP-CLI.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Requires at least: 6.5
  * Requires PHP: 8.1
- * Author: DUAAIS Sweden
+ * Author: Dhaka University Alumni Association In Sweden
  * Text Domain: duaais-setup
  */
 
@@ -38,7 +38,7 @@ function duaais_setup_blockers() {
 	}
 
 	if ( DUAAIS_SETUP_THEME !== get_template() ) {
-		$blockers[] = __( 'The DUAAIS Sweden theme is not active. Activate it under Appearance → Themes.', 'duaais-setup' );
+		$blockers[] = __( 'The Dhaka University Alumni Association In Sweden theme is not active. Activate it under Appearance → Themes.', 'duaais-setup' );
 	}
 
 	if ( ! defined( 'DUAAIS_MEMBERS_VERSION' ) ) {

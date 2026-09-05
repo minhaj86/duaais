@@ -70,7 +70,7 @@ On the Beginner plan:
 In wp-admin:
 
 1. Open **Appearance -> Themes -> Add New -> Upload Theme**, upload `duaais-<version>.zip`, and
-   activate **DUAAIS Sweden**.
+   activate **Dhaka University Alumni Association In Sweden**.
 2. Open **Plugins -> Add New -> Upload Plugin**, upload `duaais-members-<version>.zip`, and activate
    **DUAAIS Members**.
 3. Upload `duaais-setup-<version>.zip` the same way and activate **DUAAIS Setup**.

@@ -14,7 +14,7 @@ this repository.
 
 | Path | Purpose |
 | --- | --- |
-| `wp-content/themes/duaais/` | The `DUAAIS Sweden` theme: classic PHP templates, `theme.json`, `style.css`, assets |
+| `wp-content/themes/duaais/` | The `Dhaka University Alumni Association In Sweden` theme: classic PHP templates, `theme.json`, `style.css`, assets |
 | `wp-content/plugins/duaais-anniversary/` | Optional 30th anniversary homepage flyer; activation is its on/off switch |
 | `wp-content/plugins/duaais-members/` | Membership: registration, DU certificate upload, board approval, login, `My Account` |
 | `wp-content/plugins/duaais-setup/` | `Tools → DUAAIS setup` admin screen plus `seed.php`, the idempotent content seeder |

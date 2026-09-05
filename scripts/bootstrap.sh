@@ -3,7 +3,7 @@ set -eu
 
 WP="wp --path=/var/www/html"
 SITE_URL="${SITE_URL:-http://localhost:${WORDPRESS_PORT:-8080}}"
-SITE_TITLE="${SITE_TITLE:-DUAAIS Sweden}"
+SITE_TITLE="${SITE_TITLE:-Dhaka University Alumni Association In Sweden}"
 WP_ADMIN_USER="${WP_ADMIN_USER:-admin}"
 WP_ADMIN_PASSWORD="${WP_ADMIN_PASSWORD:-change-this-local-password}"
 WP_ADMIN_EMAIL="${WP_ADMIN_EMAIL:-admin@example.test}"
@@ -25,7 +25,7 @@ $WP plugin activate duaais-members duaais-setup >/dev/null
 # from Tools -> DUAAIS setup.
 $WP eval-file /var/www/html/wp-content/plugins/duaais-setup/seed.php
 
-printf '\nDUAAIS Sweden is ready at %s\n' "$SITE_URL"
+printf '\nDhaka University Alumni Association In Sweden is ready at %s\n' "$SITE_URL"
 printf 'WordPress admin: %s/wp-admin/\n' "$SITE_URL"
 printf 'Admin user: %s\n' "$WP_ADMIN_USER"
 printf 'Change the local default password before any public deployment.\n'

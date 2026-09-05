@@ -1,6 +1,6 @@
 # Azure deployment
 
-Terraform in this directory deploys the DUAAIS Sweden WordPress site to Azure Container Apps.
+Terraform in this directory deploys the Dhaka University Alumni Association In Sweden WordPress site to Azure Container Apps.
 
 ## What is created
 

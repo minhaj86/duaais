@@ -2,10 +2,10 @@
 /**
  * Plugin Name: DUAAIS Members
  * Description: Front-end registration with DU certificate upload, board approval, login, and profile management for University of Dhaka alumni in Sweden.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Requires at least: 6.5
  * Requires PHP: 8.1
- * Author: DUAAIS Sweden
+ * Author: Dhaka University Alumni Association In Sweden
  * Text Domain: duaais-members
  */
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DUAAIS_MEMBERS_VERSION = '1.1.1';
+const DUAAIS_MEMBERS_VERSION = '1.1.2';
 const DUAAIS_MEMBER_ROLE     = 'duaais_alumni';
 const DUAAIS_PENDING_ROLE    = 'duaais_pending';
 
@@ -841,7 +841,7 @@ function duaais_members_registration_shortcode() {
 						<label for="privacy_consent">
 							<?php
 							printf(
-								wp_kses_post( __( 'I agree that DUAAIS Sweden may process my information according to the <a href="%s">privacy policy</a>.', 'duaais-members' ) ),
+								wp_kses_post( __( 'I agree that Dhaka University Alumni Association In Sweden may process my information according to the <a href="%s">privacy policy</a>.', 'duaais-members' ) ),
 								esc_url( duaais_members_page_url( 'integritetspolicy' ) )
 							);
 							?>
@@ -1120,7 +1120,7 @@ function duaais_members_notify_applicant_pending( $user_id ) {
 				$user->first_name ? $user->first_name : $user->display_name
 			),
 			'',
-			__( 'Thank you for applying for DUAAIS Sweden membership. The board reviews every application together with the attached DU certificate.', 'duaais-members' ),
+			__( 'Thank you for applying for Dhaka University Alumni Association In Sweden membership. The board reviews every application together with the attached DU certificate.', 'duaais-members' ),
 			__( 'You will receive another email as soon as a decision has been made. You can log in once your membership has been approved.', 'duaais-members' ),
 			'',
 			$site,
@@ -1853,7 +1853,7 @@ function duaais_members_notify_decision( $user_id, $status ) {
 		$body    = array(
 			$greet,
 			'',
-			__( 'Your DUAAIS Sweden membership application has been approved. You can now log in with the email address and password you chose when you applied.', 'duaais-members' ),
+			__( 'Your Dhaka University Alumni Association In Sweden membership application has been approved. You can now log in with the email address and password you chose when you applied.', 'duaais-members' ),
 			duaais_members_page_url( 'logga-in' ),
 		);
 	} else {
@@ -1865,7 +1865,7 @@ function duaais_members_notify_decision( $user_id, $status ) {
 		$body    = array(
 			$greet,
 			'',
-			__( 'Thank you for your interest in DUAAIS Sweden. The board was unable to approve your membership application at this time.', 'duaais-members' ),
+			__( 'Thank you for your interest in Dhaka University Alumni Association In Sweden. The board was unable to approve your membership application at this time.', 'duaais-members' ),
 			__( 'If you believe this was a mistake, reply to this email or contact the association and we will look at your application again.', 'duaais-members' ),
 		);
 	}

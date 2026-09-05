@@ -23,10 +23,7 @@
 		<?php else : ?>
 			<a class="site-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
 				<img class="brand-logo" src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/du-logo.jpg' ); ?>" alt="">
-				<span class="brand-copy">
-					<span class="brand-name">DUAAIS</span>
-					<span class="brand-country"><?php esc_html_e( 'Sweden', 'duaais' ); ?></span>
-				</span>
+				<span class="brand-name">DUAAIS</span>
 			</a>
 		<?php endif; ?>
 

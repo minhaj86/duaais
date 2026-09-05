@@ -51,7 +51,7 @@ variable "tags" {
 variable "site_title" {
   description = "WordPress site title used by the content bootstrap."
   type        = string
-  default     = "DUAAIS Sweden"
+  default     = "Dhaka University Alumni Association In Sweden"
 }
 
 variable "custom_domain" {

@@ -13,7 +13,7 @@ wp_admin_user  = "duaais-admin"
 #   terraform output -raw wp_admin_password
 # wp_admin_password = ""
 
-site_title = "DUAAIS Sweden"
+site_title = "Dhaka University Alumni Association In Sweden"
 
 # Set once a custom domain is bound to the container app, for example "www.duaais.com".
 # custom_domain = ""

@@ -27,7 +27,7 @@ ONECOM_TRUST_HOST_KEY="${ONECOM_TRUST_HOST_KEY:-no}"
 ONECOM_SITE_URL="${ONECOM_SITE_URL:-}"
 ONECOM_WP_VERSION="${ONECOM_WP_VERSION:-latest}"
 ONECOM_TABLE_PREFIX="${ONECOM_TABLE_PREFIX:-wp_}"
-ONECOM_SITE_TITLE="${ONECOM_SITE_TITLE:-DUAAIS Sweden}"
+ONECOM_SITE_TITLE="${ONECOM_SITE_TITLE:-Dhaka University Alumni Association In Sweden}"
 ONECOM_DB_NAME="${ONECOM_DB_NAME:-}"
 ONECOM_DB_USER="${ONECOM_DB_USER:-}"
 ONECOM_DB_PASSWORD="${ONECOM_DB_PASSWORD:-}"
@@ -72,7 +72,7 @@ Only needed for --first-run:
   ONECOM_WP_ADMIN_USER      WordPress administrator login to create
   ONECOM_WP_ADMIN_PASSWORD  WordPress administrator password
   ONECOM_WP_ADMIN_EMAIL     WordPress administrator email
-  ONECOM_SITE_TITLE         Defaults to DUAAIS Sweden.
+  ONECOM_SITE_TITLE         Defaults to Dhaka University Alumni Association In Sweden.
   ONECOM_WP_VERSION         WordPress version to install. Defaults to latest.
   ONECOM_TABLE_PREFIX       Defaults to wp_.
 USAGE
@@ -542,7 +542,7 @@ if [ "$first_run" = "no" ]; then
 	cat <<'NEXT'
 
 Upload finished. In wp-admin:
-  1. Appearance -> Themes: activate "DUAAIS Sweden".
+  1. Appearance -> Themes: activate "Dhaka University Alumni Association In Sweden".
   2. Plugins: activate "DUAAIS Members" and "DUAAIS Setup".
   3. Tools -> DUAAIS setup: run the content bootstrap.
   4. Plugins: activate "DUAAIS Anniversary Flyer" when the homepage flyer is needed.

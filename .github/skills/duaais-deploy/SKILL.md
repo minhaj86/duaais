@@ -48,7 +48,7 @@ cp .env.onecom.example .env.onecom     # first time; fill in from Control Panel 
 
 After upload, in wp-admin:
 
-1. **Appearance → Themes** — activate *DUAAIS Sweden*.
+1. **Appearance → Themes** — activate *Dhaka University Alumni Association In Sweden*.
 2. **Plugins** — activate *DUAAIS Members* and *DUAAIS Setup*.
 3. **Tools → DUAAIS setup** — run the content bootstrap (this replaces `scripts/bootstrap.sh`).
 4. **Plugins** — activate *DUAAIS Anniversary Flyer* only while the homepage promotion is needed.

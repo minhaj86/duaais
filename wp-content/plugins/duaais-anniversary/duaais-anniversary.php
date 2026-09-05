@@ -2,10 +2,10 @@
 /**
  * Plugin Name: DUAAIS Anniversary Flyer
  * Description: Displays the DUAAIS 30th anniversary flyer on the homepage while the plugin is active.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Requires at least: 6.5
  * Requires PHP: 8.1
- * Author: DUAAIS Sweden
+ * Author: Dhaka University Alumni Association In Sweden
  * Text Domain: duaais-anniversary
  */
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DUAAIS_ANNIVERSARY_VERSION   = '1.1.0';
+const DUAAIS_ANNIVERSARY_VERSION   = '1.1.1';
 const DUAAIS_ANNIVERSARY_POST_SLUG = 'duaais-30th-anniversary-jubilee';
 const DUAAIS_ANNIVERSARY_DATE      = '2026-11-06';
 
@@ -87,7 +87,7 @@ function duaais_anniversary_render_flyer() {
 			<span class="anniversary-kicker"><?php esc_html_e( 'Save the date', 'duaais-anniversary' ); ?></span>
 			<h2 id="anniversary-title"><?php esc_html_e( 'Celebrating 30 years', 'duaais-anniversary' ); ?></h2>
 			<p class="anniversary-event-name">
-				<strong><?php esc_html_e( 'DUAAIS Sweden Jubilee', 'duaais-anniversary' ); ?></strong>
+				<strong><?php esc_html_e( 'Dhaka University Alumni Association In Sweden Jubilee', 'duaais-anniversary' ); ?></strong>
 				<span><?php esc_html_e( 'Annual Dinner', 'duaais-anniversary' ); ?></span>
 			</p>
 			<time class="anniversary-date" datetime="<?php echo esc_attr( DUAAIS_ANNIVERSARY_DATE ); ?>">

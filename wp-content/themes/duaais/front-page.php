@@ -12,9 +12,13 @@ get_header();
 	<section class="home-hero" aria-labelledby="hero-title">
 		<img class="home-hero-image" src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/curzon-hall-panorama.jpg' ); ?>" alt="" fetchpriority="high">
 		<div class="hero-content">
-			<img class="hero-logo" src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/du-logo.jpg' ); ?>" alt="<?php esc_attr_e( 'Dhaka University Alumni Association in Sweden', 'duaais' ); ?>" fetchpriority="high">
+			<img class="hero-logo" src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/du-logo.jpg' ); ?>" alt="<?php esc_attr_e( 'Dhaka University Alumni Association In Sweden', 'duaais' ); ?>" fetchpriority="high">
 			<p class="hero-kicker"><?php esc_html_e( 'University of Dhaka alumni in Sweden', 'duaais' ); ?></p>
-			<h1 class="hero-title" id="hero-title">DUAAIS Sweden</h1>
+			<h1 class="hero-title" id="hero-title">
+				<span class="hero-title-line"><?php esc_html_e( 'Dhaka University', 'duaais' ); ?></span>
+				<span class="hero-title-line"><?php esc_html_e( 'Alumni Association', 'duaais' ); ?></span>
+				<span class="hero-title-line"><?php esc_html_e( 'In Sweden', 'duaais' ); ?></span>
+			</h1>
 			<p class="hero-copy"><?php esc_html_e( 'A social and cultural community for University of Dhaka graduates living in Sweden. Reconnect with old friends, build new relationships, and keep the DU spirit alive.', 'duaais' ); ?></p>
 			<div class="hero-actions">
 				<a class="button button-highlight" href="<?php echo esc_url( duaais_page_url( 'bli-medlem' ) ); ?>"><?php esc_html_e( 'Join the association', 'duaais' ); ?></a>
@@ -61,7 +65,7 @@ get_header();
 			<div class="welcome-copy">
 				<span class="section-label"><?php esc_html_e( 'Our DU community', 'duaais' ); ?></span>
 				<h2><?php esc_html_e( 'Dhaka roots, life in Sweden, and a shared future', 'duaais' ); ?></h2>
-				<p><?php esc_html_e( 'DUAAIS Sweden brings together University of Dhaka graduates who reside in Sweden. Alumni from different generations, faculties, professions, and perspectives meet in an independent, non-political community.', 'duaais' ); ?></p>
+				<p><?php esc_html_e( 'Dhaka University Alumni Association In Sweden brings together University of Dhaka graduates who reside in Sweden. Alumni from different generations, faculties, professions, and perspectives meet in an independent, non-political community.', 'duaais' ); ?></p>
 				<ul class="benefit-list">
 					<li><?php esc_html_e( 'Social, cultural, and family activities throughout the year', 'duaais' ); ?></li>
 					<li><?php esc_html_e( 'Youth culture, sports, literature, and Bengali festivities', 'duaais' ); ?></li>
@@ -93,7 +97,7 @@ get_header();
 			<div class="section-heading-row">
 				<div class="section-heading">
 					<span class="section-label"><?php esc_html_e( 'Latest updates', 'duaais' ); ?></span>
-					<h2 id="latest-title"><?php esc_html_e( 'From DUAAIS Sweden', 'duaais' ); ?></h2>
+					<h2 id="latest-title"><?php esc_html_e( 'From Dhaka University Alumni Association In Sweden', 'duaais' ); ?></h2>
 					<p><?php esc_html_e( 'Official activities and community updates synced from duaais.com.', 'duaais' ); ?></p>
 				</div>
 				<a class="text-link" href="<?php echo esc_url( duaais_page_url( 'nyheter' ) ); ?>"><?php esc_html_e( 'All news', 'duaais' ); ?></a>
@@ -142,7 +146,7 @@ get_header();
 		<div class="content-shell join-layout">
 			<div>
 				<h2><?php esc_html_e( 'Are you a DU graduate living in Sweden?', 'duaais' ); ?></h2>
-				<p><?php esc_html_e( 'Apply for membership in Dhaka University Alumni Association in Sweden. Attach your DU certificate and the board reviews your application.', 'duaais' ); ?></p>
+				<p><?php esc_html_e( 'Apply for membership in Dhaka University Alumni Association In Sweden. Attach your DU certificate and the board reviews your application.', 'duaais' ); ?></p>
 			</div>
 			<a class="button" href="<?php echo esc_url( duaais_page_url( 'bli-medlem' ) ); ?>"><?php esc_html_e( 'Apply for membership', 'duaais' ); ?></a>
 		</div>

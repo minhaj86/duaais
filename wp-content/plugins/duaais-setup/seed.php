@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DUAAIS_SEED_CONTENT_VERSION = '3.2.0';
+const DUAAIS_SEED_CONTENT_VERSION = '3.10.0';
 
 $GLOBALS['duaais_seed_refresh_content'] = version_compare(
 	(string) get_option( 'duaais_seed_content_version', '1.0.0' ),
@@ -286,7 +286,12 @@ function duaais_seed_menu( $name, $pages ) {
 	return (int) $menu_id;
 }
 
-update_option( 'blogname', getenv( 'SITE_TITLE' ) ?: 'DUAAIS Sweden' );
+$site_title = getenv( 'SITE_TITLE' ) ?: 'Dhaka University Alumni Association In Sweden';
+// Existing deployments may still provide the previous default through their environment.
+if ( $site_title === 'DUAAIS Sweden' ) {
+	$site_title = 'Dhaka University Alumni Association In Sweden';
+}
+update_option( 'blogname', $site_title );
 update_option( 'blogdescription', 'University of Dhaka alumni in Sweden' );
 update_option( 'timezone_string', 'Europe/Stockholm' );
 update_option( 'date_format', 'F j, Y' );
@@ -307,8 +312,8 @@ $author_id = duaais_seed_author_id();
 wp_update_user(
 	array(
 		'ID'           => $author_id,
-		'display_name' => 'DUAAIS Sweden',
-		'nickname'     => 'DUAAIS Sweden',
+		'display_name' => 'Dhaka University Alumni Association In Sweden',
+		'nickname'     => 'Dhaka University Alumni Association In Sweden',
 	)
 );
 
@@ -319,13 +324,12 @@ $about_content = <<<'HTML'
 <!-- wp:paragraph --><p>DUAAIS also encourages and honours the achievements of Bangladeshis at different levels of Swedish society.</p><!-- /wp:paragraph -->
 <!-- wp:quote --><blockquote class="wp-block-quote"><p>DUAAIS is an independent and non-political organisation.</p></blockquote><!-- /wp:quote -->
 <!-- wp:heading --><h2 class="wp-block-heading">A community since 1996</h2><!-- /wp:heading -->
-<!-- wp:paragraph --><p>DUAAIS Sweden brings together alumni from different years, faculties, professions, and cities. University of Dhaka graduates residing in Sweden are welcome to join the association and its activities.</p><!-- /wp:paragraph -->
-<!-- wp:paragraph --><p><a href="https://www.duaais.com/aim.htm">View the original Aim and Goals page on duaais.com</a>.</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p>Dhaka University Alumni Association In Sweden brings together alumni from different years, faculties, professions, and cities. University of Dhaka graduates residing in Sweden are welcome to join the association and its activities.</p><!-- /wp:paragraph -->
 HTML;
 
 $activities_content = <<<'HTML'
 <!-- wp:heading --><h2 class="wp-block-heading">Calendar of Activities for 2026</h2><!-- /wp:heading -->
-<!-- wp:paragraph --><p>Dhaka University Alumni Association in Sweden has scheduled the following cultural, social, and community programmes for 2026.</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p>Dhaka University Alumni Association In Sweden has scheduled the following cultural, social, and community programmes for 2026.</p><!-- /wp:paragraph -->
 <!-- wp:html -->
 <ol class="activity-calendar">
 <li><time datetime="2026-02-08">February 8</time><div><strong>Student Reception</strong><p>A formal welcome event for new and prospective students.</p></div></li>
@@ -338,11 +342,9 @@ $activities_content = <<<'HTML'
 <li><time datetime="2026-12-19">December 19</time><div><strong>Christmas Dinner</strong><p>A festive end-of-year social gathering.</p></div></li>
 </ol>
 <!-- /wp:html -->
-<!-- wp:paragraph --><p><a href="https://www.duaais.com/activities.htm">View the original activity calendar on duaais.com</a>.</p><!-- /wp:paragraph -->
 HTML;
 
-$executive_content = <<<'HTML'
-<!-- wp:paragraph --><p>The following executive committee details were synchronized from the public DUAAIS website on August 16, 2026.</p><!-- /wp:paragraph -->
+$executive_roster = <<<'HTML'
 <!-- wp:table --><figure class="wp-block-table"><table><thead><tr><th>Designation</th><th>Name</th><th>Mobile</th><th>Email</th></tr></thead><tbody>
 <tr><td>President</td><td>Abul Kalam Bhuiyan</td><td><a href="tel:+46706456125">+46 70 645 6125</a></td><td><a href="mailto:abul.kalam@bhuiyan.se">abul.kalam@bhuiyan.se</a></td></tr>
 <tr><td>Vice President</td><td>Sultan Ahmed Emon</td><td><a href="tel:+46769430491">+46 76 943 0491</a></td><td><a href="mailto:bmbsahmed@gmail.com">bmbsahmed@gmail.com</a></td></tr>
@@ -356,38 +358,44 @@ $executive_content = <<<'HTML'
 <tr><td>Member</td><td>Mahbuba Jahan</td><td><a href="tel:+46737481121">+46 73 748 1121</a></td><td><a href="mailto:amijolls@yahoo.com">amijolls@yahoo.com</a></td></tr>
 <tr><td>Member</td><td>Md. Mostofa Azad</td><td><a href="tel:+46722332244">+46 72 233 2244</a></td><td><a href="mailto:mostofa@gmail.com">mostofa@gmail.com</a></td></tr>
 </tbody></table></figure><!-- /wp:table -->
-<!-- wp:paragraph --><p><a href="https://www.duaais.com/excecutive.htm">View the original Executive Committee page on duaais.com</a>.</p><!-- /wp:paragraph -->
 HTML;
 
-$document_base = get_template_directory_uri() . '/assets/documents/';
-$resources_content = <<<HTML
-<!-- wp:heading --><h2 class="wp-block-heading">Constitution</h2><!-- /wp:heading -->
-<!-- wp:list --><ul class="wp-block-list"><li><a href="{$document_base}constitution-swedish.pdf">DUAAIS Constitution — Swedish (PDF)</a></li><li><a href="{$document_base}constitution-bengali.pdf">DUAAIS Constitution — Bengali (PDF)</a></li></ul><!-- /wp:list -->
+$document_base            = get_template_directory_uri() . '/assets/documents/';
+$swedish_constitution_url = esc_url( $document_base . 'constitution-swedish.pdf' );
+$bengali_constitution_url = esc_url( $document_base . 'constitution-bengali.pdf' );
+$constitution_content     = <<<HTML
+<!-- wp:paragraph --><p>Select Swedish or Bengali to read the DUAAIS constitution.</p><!-- /wp:paragraph -->
+<!-- wp:html -->
+<div class="constitution-viewer" data-constitution-viewer>
+	<div class="constitution-options" role="group" aria-label="Constitution language">
+		<button class="constitution-option is-active" type="button" data-constitution-src="{$swedish_constitution_url}" data-constitution-title="DUAAIS Constitution in Swedish" aria-controls="constitution-document" aria-pressed="true">Swedish</button>
+		<button class="constitution-option" type="button" data-constitution-src="{$bengali_constitution_url}" data-constitution-title="DUAAIS Constitution in Bengali" aria-controls="constitution-document" aria-pressed="false">Bengali</button>
+	</div>
+	<iframe id="constitution-document" class="constitution-frame" src="{$swedish_constitution_url}" title="DUAAIS Constitution in Swedish" loading="lazy"></iframe>
+</div>
+<!-- /wp:html -->
+<!-- wp:paragraph --><p>Open or download the PDF directly: <a href="{$swedish_constitution_url}">Swedish</a> or <a href="{$bengali_constitution_url}">Bengali</a>.</p><!-- /wp:paragraph -->
+HTML;
+
+$resources_content = <<<'HTML'
 <!-- wp:heading --><h2 class="wp-block-heading">Important Links</h2><!-- /wp:heading -->
 <!-- wp:list --><ul class="wp-block-list"><li><a href="https://www.uhr.se/en/start/">Swedish Council for Higher Education</a></li><li><a href="http://bangladesh.freehomepage.com/">Bangladesh Homepage</a></li><li><a href="https://stockholm.mofa.gov.bd/">Embassy of Bangladesh in Stockholm</a></li></ul><!-- /wp:list -->
 <!-- wp:heading --><h2 class="wp-block-heading">Bangla Newspapers</h2><!-- /wp:heading -->
 <!-- wp:list --><ul class="wp-block-list"><li><a href="https://www.allbanglanewspaper.xyz/">All Bangla Newspapers</a></li><li><a href="https://www.ittefaq.com.bd/">Ittefaq</a></li><li><a href="https://www.prothomalo.com/">Prothom Alo</a></li></ul><!-- /wp:list -->
-<!-- wp:paragraph --><p>Links and documents were synchronized from the public resources on <a href="https://www.duaais.com/">duaais.com</a>.</p><!-- /wp:paragraph -->
 HTML;
 
 $contact_content = <<<'HTML'
 <!-- wp:heading --><h2 class="wp-block-heading">Contact the Association</h2><!-- /wp:heading -->
 <!-- wp:paragraph --><p>For membership questions, activities, partnerships, and website comments, email <a href="mailto:info@duaais.com">info@duaais.com</a>.</p><!-- /wp:paragraph -->
-<!-- wp:heading {"level":3} --><h3 class="wp-block-heading">Publisher and Editor</h3><!-- /wp:heading -->
-<!-- wp:paragraph --><p>Abul Kalam Bhuiyan<br><a href="mailto:abul.kalam@bhuiyan.se">abul.kalam@bhuiyan.se</a><br><a href="tel:+46706456125">+46 70 645 6125</a></p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading">Executive Committee</h2><!-- /wp:heading -->
 HTML;
 
-// Built from home_url() rather than hardcoded, so the link also resolves when WordPress is
-// installed under a subdirectory such as example.com/wproot.
-$contact_content .= sprintf(
-	"\n" . '<!-- wp:paragraph --><p>Executive committee contacts are available on the <a href="%s">Executive Committee page</a>.</p><!-- /wp:paragraph -->',
-	esc_url( home_url( '/executive-committee/' ) )
-);
+$contact_content .= "\n" . $executive_roster;
 
 $privacy_content = <<<'HTML'
 <!-- wp:paragraph --><p><strong>Last updated: August 16, 2026.</strong></p><!-- /wp:paragraph -->
 <!-- wp:heading --><h2 class="wp-block-heading">Data Controller</h2><!-- /wp:heading -->
-<!-- wp:paragraph --><p>DUAAIS Sweden is responsible for processing personal information in the membership register. Send privacy questions to <a href="mailto:info@duaais.com">info@duaais.com</a>.</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p>Dhaka University Alumni Association In Sweden is responsible for processing personal information in the membership register. Send privacy questions to <a href="mailto:info@duaais.com">info@duaais.com</a>.</p><!-- /wp:paragraph -->
 <!-- wp:heading --><h2 class="wp-block-heading">Information We Process</h2><!-- /wp:heading -->
 <!-- wp:paragraph --><p>When you register, we store your name, email address, University of Dhaka faculty or department, graduation year, and any optional information you provide about your studies and city in Sweden. WordPress stores passwords only as secure hashes.</p><!-- /wp:paragraph -->
 <!-- wp:heading --><h2 class="wp-block-heading">Purpose and Legal Basis</h2><!-- /wp:heading -->
@@ -398,17 +406,17 @@ $privacy_content = <<<'HTML'
 <!-- wp:paragraph --><p>WordPress uses essential cookies for login and secure session management. The site does not use advertising cookies.</p><!-- /wp:paragraph -->
 HTML;
 
-$home_id       = duaais_seed_page( 'hem', 'Home', 'University of Dhaka alumni in Sweden.', '' );
-$about_id      = duaais_seed_page( 'om-foreningen', 'Aim and Goals', 'The official aims of Dhaka University Alumni Association in Sweden.', $about_content );
-$activities_id = duaais_seed_page( 'activities', 'Activities', 'The official DUAAIS calendar of activities for 2026.', $activities_content );
-$executive_id  = duaais_seed_page( 'executive-committee', 'Executive Committee', 'Current DUAAIS committee members and public contact details.', $executive_content );
-$resources_id  = duaais_seed_page( 'resources', 'Resources', 'Constitutions, important links, and Bangla newspapers.', $resources_content );
-$news_id       = duaais_seed_page( 'nyheter', 'News', 'Official DUAAIS activities and community updates.', '' );
-$member_id     = duaais_seed_page( 'bli-medlem', 'Join DUAAIS', 'For University of Dhaka graduates currently residing in Sweden.', '[duaais_register]' );
-$login_id      = duaais_seed_page( 'logga-in', 'Log in', 'Access the DUAAIS member portal.', '[duaais_login]' );
-$account_id    = duaais_seed_page( 'mitt-konto', 'My Account', 'Manage your DU alumni profile.', '[duaais_account]' );
-$contact_id    = duaais_seed_page( 'kontakt', 'Contact', 'Contact Dhaka University Alumni Association in Sweden.', $contact_content );
-$privacy_id    = duaais_seed_page( 'integritetspolicy', 'Privacy Policy', 'How DUAAIS Sweden processes personal information.', $privacy_content );
+$home_id         = duaais_seed_page( 'hem', 'Home', 'University of Dhaka alumni in Sweden.', '' );
+$about_id        = duaais_seed_page( 'om-foreningen', 'Aim and Goals', 'The official aims of Dhaka University Alumni Association In Sweden.', $about_content );
+$activities_id   = duaais_seed_page( 'activities', 'Activities', 'The official DUAAIS calendar of activities for 2026.', $activities_content );
+$constitution_id = duaais_seed_page( 'constitution', 'Constitution', 'Read the DUAAIS constitution in Swedish or Bengali.', $constitution_content );
+$resources_id    = duaais_seed_page( 'resources', 'Resources', 'Important links and Bangla newspapers.', $resources_content );
+$news_id         = duaais_seed_page( 'nyheter', 'News', 'Official DUAAIS activities and community updates.', '' );
+$member_id       = duaais_seed_page( 'bli-medlem', 'Join DUAAIS', 'For University of Dhaka graduates currently residing in Sweden.', '[duaais_register]' );
+$login_id        = duaais_seed_page( 'logga-in', 'Log in', 'Access the DUAAIS member portal.', '[duaais_login]' );
+$account_id      = duaais_seed_page( 'mitt-konto', 'My Account', 'Manage your DU alumni profile.', '[duaais_account]' );
+$contact_id      = duaais_seed_page( 'kontakt', 'Contact', 'Contact Dhaka University Alumni Association In Sweden.', $contact_content );
+$privacy_id      = duaais_seed_page( 'integritetspolicy', 'Privacy Policy', 'How Dhaka University Alumni Association In Sweden processes personal information.', $privacy_content );
 
 update_option( 'show_on_front', 'page' );
 update_option( 'page_on_front', $home_id );
@@ -427,6 +435,11 @@ $activity_category    = duaais_seed_category( 'activities', 'Activities' );
 $image_directory      = get_template_directory() . '/assets/images/';
 
 if ( ! empty( $GLOBALS['duaais_seed_refresh_content'] ) ) {
+	$retired_committee_page = get_page_by_path( 'executive-committee', OBJECT, 'page' );
+	if ( $retired_committee_page instanceof WP_Post ) {
+		wp_delete_post( $retired_committee_page->ID, true );
+	}
+
 	foreach ( array( 'alumntraff-i-stockholm', 'mentorprogrammet-oppnar', 'lokala-alumntraffar' ) as $retired_slug ) {
 		$retired_post = get_page_by_path( $retired_slug, OBJECT, 'post' );
 		if ( $retired_post instanceof WP_Post ) {
@@ -445,15 +458,16 @@ if ( ! empty( $GLOBALS['duaais_seed_refresh_content'] ) ) {
 	}
 }
 
-$calendar_content = <<<'HTML'
-<!-- wp:paragraph --><p>Dhaka University Alumni Association in Sweden has announced its calendar of cultural, social, and community programmes for 2026.</p><!-- /wp:paragraph -->
+$activities_url   = esc_url( home_url( '/activities/' ) );
+$calendar_content = <<<HTML
+<!-- wp:paragraph --><p>Dhaka University Alumni Association In Sweden has announced its calendar of cultural, social, and community programmes for 2026.</p><!-- /wp:paragraph -->
 <!-- wp:heading --><h2 class="wp-block-heading">2026 Programme</h2><!-- /wp:heading -->
 <!-- wp:list --><ul class="wp-block-list"><li><strong>February 8:</strong> Student Reception</li><li><strong>May 1:</strong> Annual General Meeting and Pahela Boishakh Celebration</li><li><strong>July 1–4:</strong> Summer Excursion to Bergen, Norway</li><li><strong>August 1:</strong> Summer Picnic and Barbecue</li><li><strong>August 29:</strong> Sports Day</li><li><strong>September 27:</strong> Pitha Utshob</li><li><strong>November 6:</strong> DUAAIS 30th Anniversary Jubilee and Annual Dinner</li><li><strong>December 19:</strong> Christmas Dinner</li></ul><!-- /wp:list -->
-<!-- wp:paragraph --><p>See the <a href="/activities/">Activities page</a> for descriptions of every programme. This calendar was synchronized from the public <a href="https://www.duaais.com/activities.htm">duaais.com activity page</a>.</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p>See the <a href="{$activities_url}">Activities page</a> for descriptions of every programme.</p><!-- /wp:paragraph -->
 HTML;
 
 $jubilee_content = <<<'HTML'
-<!-- wp:paragraph --><p>DUAAIS Sweden will commemorate three decades of service with its 30th Anniversary Jubilee and Annual Dinner on November 6, 2026.</p><!-- /wp:paragraph -->
+<!-- wp:paragraph --><p>Dhaka University Alumni Association In Sweden will commemorate three decades of service with its 30th Anniversary Jubilee and Annual Dinner on November 6, 2026.</p><!-- /wp:paragraph -->
 <!-- wp:heading --><h2 class="wp-block-heading">Thirty years of community</h2><!-- /wp:heading -->
 <!-- wp:paragraph --><p>The formal dinner is one of the official programmes in the association's 2026 activity calendar. It marks thirty years of social, cultural, and community work among University of Dhaka graduates in Sweden.</p><!-- /wp:paragraph -->
 <!-- wp:paragraph --><p>Further event information will be shared by the association. Contact <a href="mailto:info@duaais.com">info@duaais.com</a> with questions.</p><!-- /wp:paragraph -->
@@ -508,12 +522,12 @@ duaais_seed_post(
 $primary_menu_id = duaais_seed_menu(
 	'Primary Navigation',
 	array(
-		$home_id       => 'Home',
-		$about_id      => 'Aim and Goals',
-		$activities_id => 'Activities',
-		$executive_id  => 'Committee',
-		$news_id       => 'News',
-		$contact_id    => 'Contact',
+		$home_id         => 'Home',
+		$about_id        => 'Aim and Goals',
+		$activities_id   => 'Activities',
+		$constitution_id => 'Constitution',
+		$news_id         => 'News',
+		$contact_id      => 'Contact',
 	)
 );
 
@@ -522,7 +536,6 @@ $footer_menu_id = duaais_seed_menu(
 	array(
 		$about_id      => 'Aim and Goals',
 		$activities_id => 'Activities',
-		$executive_id  => 'Executive Committee',
 		$resources_id  => 'Resources',
 		$member_id     => 'Join DUAAIS',
 		$privacy_id    => 'Privacy Policy',

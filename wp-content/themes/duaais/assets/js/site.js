@@ -53,3 +53,41 @@
 		}
 	});
 })();
+
+(function () {
+	'use strict';
+
+	const viewer = document.querySelector('[data-constitution-viewer]');
+
+	if (!viewer) {
+		return;
+	}
+
+	const frame = viewer.querySelector('.constitution-frame');
+	const options = viewer.querySelectorAll('[data-constitution-src]');
+
+	if (!frame || !options.length) {
+		return;
+	}
+
+	options.forEach(function (option) {
+		option.addEventListener('click', function () {
+			const source = option.dataset.constitutionSrc;
+			const title = option.dataset.constitutionTitle;
+
+			if (!source || !title) {
+				return;
+			}
+
+			frame.setAttribute('src', source);
+			frame.setAttribute('title', title);
+
+			options.forEach(function (candidate) {
+				const isActive = candidate === option;
+
+				candidate.classList.toggle('is-active', isActive);
+				candidate.setAttribute('aria-pressed', String(isActive));
+			});
+		});
+	});
+})();

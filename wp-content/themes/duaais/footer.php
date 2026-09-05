@@ -10,9 +10,9 @@
 		<div>
 			<a class="footer-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 				<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/du-logo.jpg' ); ?>" alt="">
-				<span>DUAAIS Sweden</span>
+				<span>Dhaka University Alumni Association In Sweden</span>
 			</a>
-			<p class="footer-about"><?php esc_html_e( 'Dhaka University Alumni Association in Sweden connects DU graduates who live, work, and build their lives across Sweden.', 'duaais' ); ?></p>
+			<p class="footer-about"><?php esc_html_e( 'Dhaka University Alumni Association In Sweden connects DU graduates who live, work, and build their lives across Sweden.', 'duaais' ); ?></p>
 		</div>
 
 		<div>

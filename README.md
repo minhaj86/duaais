@@ -1,15 +1,15 @@
-# DUAAIS Sweden WordPress website
+# Dhaka University Alumni Association In Sweden WordPress website
 
-A containerized English-language WordPress website for Dhaka University Alumni Association in Sweden. It serves people who studied at University of Dhaka and now reside in Sweden. The site includes blogging, front-end member registration and login, DU alumni profiles, and GDPR-oriented consent handling.
+A containerized English-language WordPress website for Dhaka University Alumni Association In Sweden. It serves people who studied at University of Dhaka and now reside in Sweden. The site includes blogging, front-end member registration and login, DU alumni profiles, and GDPR-oriented consent handling.
 
 ## Content synchronization
 
-Public association content was synchronized from [duaais.com](https://www.duaais.com/) on August 16, 2026:
+Public association content was synchronized on September 6, 2026:
 
 - Aim and Goals
 - 2026 Calendar of Activities
-- Executive Committee and its publicly listed contact details
-- Swedish and Bengali constitutions
+- Executive committee roster and its publicly listed contact details on the Contact page
+- Swedish and Bengali constitutions, stored locally and available through an embedded document viewer
 - Important links and Bangla newspaper links
 - Official association and publisher contact details
 - Legacy DU campus thumbnails and the DUAAIS logo

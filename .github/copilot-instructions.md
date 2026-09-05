@@ -1,6 +1,6 @@
-# GitHub Copilot instructions — DUAAIS Sweden
+# GitHub Copilot instructions — Dhaka University Alumni Association In Sweden
 
-A containerized WordPress site for the Dhaka University Alumni Association in Sweden. This
+A containerized WordPress site for Dhaka University Alumni Association In Sweden. This
 repository contains **only** a custom theme and three custom plugins; WordPress core is never
 vendored here.
 
