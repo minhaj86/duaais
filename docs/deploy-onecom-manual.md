@@ -143,10 +143,25 @@ otherwise unchanged.
 
 ## Updating the site later
 
-1. Run `./scripts/package.sh` again.
-2. Upload each new archive through the same wp-admin upload screen.
-3. When WordPress detects the installed copy, choose **Replace current with uploaded**.
-4. Run **Tools -> DUAAIS setup** only when seeded content changed.
+For an existing installation at `https://www.duaais.com/test`:
+
+1. Back up the database and the existing `test/wp-content/` directory.
+2. Run `./scripts/package.sh`.
+3. Upload the new theme archive under **Appearance -> Themes -> Add New -> Upload Theme**, then
+   choose **Replace current with uploaded**.
+4. Upload each plugin archive under **Plugins -> Add New -> Upload Plugin**, replacing the installed
+   copies.
+5. Run **Tools -> DUAAIS setup**. The seeder is idempotent and applies any seeded content updates.
+6. Clear the one.com cache and verify the site at `https://www.duaais.com/test`.
+
+When using File Manager instead, replace only these directories under `test/wp-content/`:
+
+- `themes/duaais/`
+- `plugins/duaais-members/`
+- `plugins/duaais-setup/`
+- `plugins/duaais-anniversary/`
+
+Do not replace WordPress core, `wp-config.php`, uploads, or the existing database settings.
 
 `DUAAIS_SEED_CONTENT_VERSION` controls whether existing seeded pages and posts are refreshed. The
 seeder also resets the site title, tagline, timezone, date formats, permalink structure, front page,
