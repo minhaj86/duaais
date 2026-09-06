@@ -27,8 +27,25 @@ docker compose run --rm wpcli sh /scripts/bootstrap.sh
 ```
 
 Open [http://localhost:8080](http://localhost:8080). The WordPress dashboard is at [http://localhost:8080/wp-admin/](http://localhost:8080/wp-admin/).
+Mailpit captures local email at [http://localhost:8025](http://localhost:8025) instead of delivering
+it externally.
 
 The example administrator is `admin` with password `change-this-local-password`. Change these values in `.env` before the first bootstrap whenever the site will be reachable by anyone else.
+
+### Verify email locally
+
+Open **Settings -> DUAAIS SMTP**, select **Other SMTP**, and use:
+
+| Setting | Value |
+| --- | --- |
+| SMTP Host | `mailpit` |
+| SMTP Port | `1025` |
+| Encryption | None |
+| Authentication | Disabled |
+| From Email | `wordpress@example.test` |
+
+Enable SMTP, save the settings, and use **Send a Test Email**. The message appears in Mailpit at
+[http://localhost:8025](http://localhost:8025).
 
 ## Content management
 
@@ -76,8 +93,10 @@ The WordPress registration screen at `wp-login.php?action=register` stays disabl
 membership has to go through the reviewed application form. Any account created outside that form
 gets the `Pending Alumni Member` role and still needs approval.
 
-Approval and rejection emails depend on working outbound mail. Configure SMTP before going live so
-that applicants and the board are notified.
+Approval and rejection emails depend on working outbound mail. Configure and test **Settings ->
+DUAAIS SMTP** before going live so that applicants and the board are notified. The plugin has
+presets for one.com and Google/Gmail. Gmail requires 2-Step Verification and a Google app password;
+normal Google account passwords are not accepted.
 
 ## Deploying to one.com
 
@@ -94,8 +113,9 @@ cp .env.onecom.example .env.onecom
 ```
 
 That installs WordPress core, writes `wp-config.php`, creates the administrator, uploads the theme
-and all three plugins, activates the theme and two required plugins, and seeds the content. Activate
-the optional **DUAAIS Anniversary Flyer** plugin in wp-admin whenever the flyer should be visible.
+and all four plugins, activates the theme and three required plugins, and seeds the content. Activate
+the optional **DUAAIS Anniversary Flyer** plugin in wp-admin whenever the flyer should be visible,
+then configure the already-active mailer under **Settings -> DUAAIS SMTP**.
 Later updates are just:
 
 ```sh
@@ -121,7 +141,7 @@ Use the [script deployment guide](docs/deploy-onecom-script.md) for SFTP automat
 
 Terraform under [`infra/terraform`](infra/terraform) deploys the site to Azure Container Apps with
 Azure Database for MySQL flexible server, an Azure file share for uploaded media, and a container
-registry holding an image with the theme and all three plugins baked in. The anniversary plugin
+registry holding an image with the theme and all four plugins baked in. The anniversary plugin
 remains controlled through the WordPress **Plugins** screen.
 
 ```sh
@@ -154,4 +174,8 @@ docker compose down
 docker compose down -v
 ```
 
-For a public deployment, use HTTPS, configure transactional email/SMTP for password resets and membership approval notifications, verify the synchronized public contact details, set strong database/admin credentials, disable `WORDPRESS_DEBUG`, and establish backups and WordPress update monitoring. The Terraform configuration in `infra/terraform` covers HTTPS, credentials, debug settings, and database backups; transactional email still has to be configured.
+For a public deployment, use HTTPS, configure and test **DUAAIS SMTP** for password resets and
+membership approval notifications, verify the synchronized public contact details, set strong
+database/admin credentials, disable `WORDPRESS_DEBUG`, and establish backups and WordPress update
+monitoring. The Terraform configuration in `infra/terraform` covers HTTPS, credentials, debug
+settings, and database backups; SMTP credentials still have to be configured in WordPress.

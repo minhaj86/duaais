@@ -6,7 +6,7 @@ Guidance for AI coding agents working in this repository.
 
 `duaais` is a containerized, English-language **WordPress** site for the Dhaka University Alumni
 Association in Sweden (DUAAIS). It is not a PHP application in the general sense: it is a custom
-WordPress **theme** plus three custom **plugins**, delivered either as a Docker image (Azure
+WordPress **theme** plus four custom **plugins**, delivered either as a Docker image (Azure
 Container Apps) or as an SFTP upload (one.com shared hosting). WordPress core is never vendored into
 this repository.
 
@@ -18,18 +18,19 @@ this repository.
 | `wp-content/plugins/duaais-anniversary/` | Optional 30th anniversary homepage flyer; activation is its on/off switch |
 | `wp-content/plugins/duaais-members/` | Membership: registration, DU certificate upload, board approval, login, `My Account` |
 | `wp-content/plugins/duaais-setup/` | `Tools → DUAAIS setup` admin screen plus `seed.php`, the idempotent content seeder |
+| `wp-content/plugins/duaais-smtp/` | SMTP delivery, one.com and Gmail presets, and a test-email screen |
 | `scripts/bootstrap.sh` | WP-CLI bootstrap: installs core, activates the required theme/plugins, runs `seed.php` |
 | `scripts/duaais-entrypoint.sh` | Container entrypoint; runs the bootstrap when `DUAAIS_BOOTSTRAP=1` |
-| `scripts/deploy-onecom.sh` | Mirrors the theme and all three plugins to one.com over SFTP (`lftp`, else OpenSSH `sftp`) |
+| `scripts/deploy-onecom.sh` | Mirrors the theme and all four plugins to one.com over SFTP (`lftp`, else OpenSSH `sftp`) |
 | `scripts/php-uploads.ini` | Raises `upload_max_filesize` to 8M for certificate uploads |
 | `infra/terraform/` | Azure Container Apps + MySQL flexible server + file share + ACR |
 | `docs/deploy-onecom.md` | Index for the scripted and manual one.com deployment runbooks |
 | `docs/deploy-onecom-script.md` | one.com deployment through the SFTP script |
 | `docs/deploy-onecom-manual.md` | one.com deployment through the file manager and wp-admin |
-| `Dockerfile`, `docker-compose.yml` | Deployable image and the local three-service stack |
+| `Dockerfile`, `docker-compose.yml` | Deployable image and the local four-service stack |
 
-**Only the theme and the three plugins are deployable payload.** `scripts/deploy-onecom.sh` uploads
-exactly those four directories, and the `Dockerfile` copies exactly those four plus
+**Only the theme and the four plugins are deployable payload.** `scripts/deploy-onecom.sh` uploads
+exactly those five directories, and the `Dockerfile` copies exactly those five plus
 `scripts/`. Anything a site needs at runtime must live in one of them — never in `scripts/` alone,
 because shared hosting never runs `scripts/`.
 
@@ -53,15 +54,16 @@ Follow WordPress Coding Standards; the existing files already do.
 - **Tabs** for indentation in PHP and shell. Two spaces in CSS, `theme.json`, and YAML.
 - **Procedural PHP with prefixed function names.** No classes, no namespaces, no autoloader, no
   Composer. Prefixes: `duaais_` (theme), `duaais_anniversary_` (anniversary plugin),
-  `duaais_members_` (members plugin), `duaais_setup_` and `duaais_seed_` (setup plugin).
+  `duaais_members_` (members plugin), `duaais_setup_` and `duaais_seed_` (setup plugin), and
+  `duaais_smtp_` (SMTP plugin).
 - **Yoda-free but spaced parentheses:** `function duaais_members_status( $user ) {`.
 - Every PHP file starts with a docblock and `if ( ! defined( 'ABSPATH' ) ) { exit; }`.
 - Every function gets a docblock with `@param` / `@return`.
 - **Escape on output, always:** `esc_html_e()`, `esc_html__()`, `esc_attr()`, `esc_url()`. Sanitize
   on input: `sanitize_text_field()`, `sanitize_email()`, `sanitize_title()`, `absint()`.
-- **Text domains:** `duaais` (theme), `duaais-anniversary`, `duaais-members`, `duaais-setup`. They
-  match the folder names and must not be mixed up. All user-facing strings are translated and
-  written in English.
+- **Text domains:** `duaais` (theme), `duaais-anniversary`, `duaais-members`, `duaais-setup`,
+  `duaais-smtp`. They match the folder names and must not be mixed up. All user-facing strings are
+  translated and written in English.
 - **Constants for magic values** — see `DUAAIS_MEMBER_ROLE`, `DUAAIS_STATUS_PENDING`,
   `DUAAIS_CERTIFICATE_MAX_BYTES` in `duaais-members.php`.
 - Comments explain *why*, not *what*. The existing comments are a good model; do not add noise.
@@ -114,10 +116,10 @@ docker compose run --rm wpcli sh /scripts/bootstrap.sh   # idempotent, safe to r
 docker compose down -v
 ```
 
-The site is at <http://localhost:8080>, wp-admin at <http://localhost:8080/wp-admin/>. The theme and
-all three plugins are bind-mounted, so PHP and CSS edits are live on refresh — no rebuild needed. Only
-`Dockerfile`, `docker-compose.yml`, or `scripts/php-uploads.ini` changes require
-`docker compose up -d --build`.
+The site is at <http://localhost:8080>, wp-admin at <http://localhost:8080/wp-admin/>, and Mailpit at
+<http://localhost:8025>. The theme and all four plugins are bind-mounted, so PHP, CSS, and JS edits
+are live on refresh — no rebuild needed. Only `Dockerfile`, `docker-compose.yml`, or
+`scripts/php-uploads.ini` changes require `docker compose up -d --build`.
 
 **Always lint PHP after editing it.** A parse error in a plugin white-screens the whole site, and on
 shared hosting there is no WP-CLI to recover with.
@@ -125,7 +127,7 @@ shared hosting there is no WP-CLI to recover with.
 ## Deployment
 
 - **one.com (shared hosting, primary):** `./scripts/deploy-onecom.sh` (use `--dry-run` first when
-  `lftp` is available). Then activate the theme and two required plugins in wp-admin and run
+  `lftp` is available). Then activate the theme and three required plugins in wp-admin and run
   **Tools → DUAAIS setup**. Activate or deactivate **DUAAIS Anniversary Flyer** independently. No
   SSH, no WP-CLI, no cron on the Beginner/Explorer plans — this is why the seeder is duplicated into
   an admin screen. See `docs/deploy-onecom-script.md`; the browser-only alternative is in

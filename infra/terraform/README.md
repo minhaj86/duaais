@@ -7,7 +7,7 @@ Terraform in this directory deploys the Dhaka University Alumni Association In S
 | Resource | Purpose |
 | --- | --- |
 | Container Apps environment | Runs the site, VNet integrated, HTTPS ingress with a managed certificate |
-| Container app | WordPress 6.8.2 on PHP 8.3 with the `duaais` theme and the `duaais-members` and `duaais-setup` plugins |
+| Container app | WordPress 6.8.2 on PHP 8.3 with the `duaais` theme and all DUAAIS plugins |
 | Container registry | Holds the image built from the repository `Dockerfile` |
 | MySQL flexible server | WordPress database, private access only, TLS required |
 | Storage account and file share | Persists `wp-content/uploads` across restarts and revisions |
@@ -66,8 +66,8 @@ To publish images from a pipeline instead, set `build_image_on_apply = false` an
   `disallow_file_mods = false` if you accept that dashboard-installed plugins disappear on restart.
 - **One replica.** `max_replicas` defaults to 1. Raising it requires shared `wp-content`, an object
   cache and a session-safe login setup.
-- **Email.** WordPress cannot send mail out of the box on Azure. Configure an SMTP plugin or relay
-  before relying on password resets or registration notifications.
+- **Email.** Configure and test **Settings -> DUAAIS SMTP** before relying on password resets or
+  registration notifications.
 - **Custom domain.** Set `custom_domain` after binding the hostname and certificate to the
   container app, so `WP_HOME` and `WP_SITEURL` match what visitors use.
 - **Backups.** MySQL keeps `mysql_backup_retention_days` of automatic backups. The uploads share is

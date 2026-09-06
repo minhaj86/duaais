@@ -5,7 +5,7 @@ wp-admin. It does not require SFTP, SSH, WP-CLI, Docker, or the deployment scrip
 SFTP deployment, use the [script guide](deploy-onecom-script.md).
 
 one.com runs the site as an ordinary WordPress instance. This repository supplies only the DUAAIS
-theme, three custom plugins, and the seeded content.
+theme, four custom plugins, and the seeded content.
 
 ## What one.com provides
 
@@ -42,11 +42,12 @@ From the repository root, run:
 ./scripts/package.sh
 ```
 
-This creates four versioned ZIP archives in `dist/`:
+This creates five versioned ZIP archives in `dist/`:
 
 - `duaais-<version>.zip`
 - `duaais-members-<version>.zip`
 - `duaais-setup-<version>.zip`
+- `duaais-smtp-<version>.zip`
 - `duaais-anniversary-<version>.zip`
 
 Each archive contains one correctly named top-level folder, as WordPress requires.
@@ -74,9 +75,10 @@ In wp-admin:
 2. Open **Plugins -> Add New -> Upload Plugin**, upload `duaais-members-<version>.zip`, and activate
    **DUAAIS Members**.
 3. Upload `duaais-setup-<version>.zip` the same way and activate **DUAAIS Setup**.
-4. Upload `duaais-anniversary-<version>.zip` the same way. Activate **DUAAIS Anniversary Flyer**
+4. Upload `duaais-smtp-<version>.zip` the same way and activate **DUAAIS SMTP Mailer**.
+5. Upload `duaais-anniversary-<version>.zip` the same way. Activate **DUAAIS Anniversary Flyer**
    only when the homepage flyer should be visible.
-5. Open **Tools -> DUAAIS setup** and click **Run DUAAIS setup**.
+6. Open **Tools -> DUAAIS setup** and click **Run DUAAIS setup**.
 
 The setup screen creates the pages, posts, featured images, categories, menus, and site settings.
 It is idempotent and replaces the WP-CLI bootstrap on shared hosting.
@@ -102,7 +104,8 @@ Address.
 
 ### Configure email
 
-Create a mailbox in the one.com Control Panel and configure an SMTP plugin such as WP Mail SMTP:
+Create a mailbox in the one.com Control Panel. Open **Settings -> DUAAIS SMTP**, select
+**one.com**, and enter:
 
 | Setting | Value |
 | --- | --- |
@@ -112,6 +115,13 @@ Create a mailbox in the one.com Control Panel and configure an SMTP plugin such 
 | Authentication | Enabled |
 | Username | Full mailbox address |
 | Password | Mailbox password |
+
+Set **From Email** to the same mailbox, enable SMTP, save, and use **Send a Test Email**. The
+password is encrypted with the WordPress authentication salts before it is stored.
+
+To use Gmail instead, select **Google / Gmail**, enter the full Gmail or Google Workspace address,
+and use a 16-character Google app password. The Google account must have 2-Step Verification
+enabled; its normal password will not work.
 
 Set **Settings -> DUAAIS Membership -> Notification email** to the mailbox that should receive new
 membership applications. If left blank, the WordPress administration email is used. The
@@ -161,6 +171,7 @@ When using File Manager instead, replace only these directories under `test/wp-c
 - `themes/duaais/`
 - `plugins/duaais-members/`
 - `plugins/duaais-setup/`
+- `plugins/duaais-smtp/`
 - `plugins/duaais-anniversary/`
 
 Do not replace WordPress core, `wp-config.php`, uploads, or the existing database settings.
@@ -182,6 +193,6 @@ large changes.
   manager editor.
 - **WordPress rejects an archive.** Confirm that it came from `./scripts/package.sh` and that you
   used the theme upload screen for `duaais-<version>.zip` and the plugin upload screen for the other
-  three archives.
+  four archives.
 - **The live site still shows an old version.** Check the installed version in wp-admin, clear any
   one.com cache, and confirm that WordPress replaced the existing theme or plugin.

@@ -1,0 +1,45 @@
+.duaais-smtp {
+  max-width: 960px;
+}
+
+.duaais-smtp-status {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px;
+  margin: 20px 0;
+  overflow: hidden;
+  border: 1px solid #c3c4c7;
+  border-left: 4px solid #8c8f94;
+  background: #c3c4c7;
+}
+
+.duaais-smtp-status.is-ready {
+  border-left-color: #00a32a;
+}
+
+.duaais-smtp-status > div {
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.duaais-smtp-status strong,
+.duaais-smtp-status span {
+  display: block;
+}
+
+.duaais-smtp-status strong {
+  margin-bottom: 5px;
+}
+
+.duaais-smtp-block-label {
+  display: block;
+  margin-top: 8px;
+}
+
+.duaais-smtp hr {
+  margin: 28px 0 22px;
+}
+
+.duaais-smtp [hidden] {
+  display: none;
+}

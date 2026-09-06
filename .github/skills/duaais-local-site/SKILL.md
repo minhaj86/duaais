@@ -5,10 +5,11 @@ description: Run, inspect, reset, and verify the DUAAIS WordPress site locally w
 
 # Run and verify the DUAAIS site locally
 
-The local stack is three services in `docker-compose.yml`: `database` (MariaDB 11.8), `wordpress`
-(WordPress 6.8.2 / PHP 8.3 / Apache), and `wpcli` (in the `tools` profile, so it only runs on
-demand). The theme and all three plugins are bind-mounted into the `wordpress` container, so **PHP,
-CSS, and JS edits are live on refresh** — no rebuild, no restart.
+The local stack is four services in `docker-compose.yml`: `database` (MariaDB 11.8), `mailpit`
+(local SMTP capture and web UI), `wordpress` (WordPress 6.8.2 / PHP 8.3 / Apache), and `wpcli` (in
+the `tools` profile, so it only runs on demand). The theme and all four plugins are bind-mounted
+into the `wordpress` container, so **PHP, CSS, and JS edits are live on refresh** — no rebuild, no
+restart.
 
 PHP is not installed on the host. Every PHP command goes through Docker.
 
@@ -20,10 +21,11 @@ docker compose up -d
 docker compose run --rm wpcli sh /scripts/bootstrap.sh
 ```
 
-`bootstrap.sh` installs core if needed, activates the theme and two required plugins, and runs
+`bootstrap.sh` installs core if needed, activates the theme and three required plugins, and runs
 `seed.php`. The optional `duaais-anniversary` plugin keeps its activation state. It is idempotent —
 re-run it any time. Site: <http://localhost:8080>, admin:
-<http://localhost:8080/wp-admin/> with the credentials from `.env`.
+<http://localhost:8080/wp-admin/> with the credentials from `.env`, and Mailpit:
+<http://localhost:8025>.
 
 Wait for health before assuming failure; the `wordpress` service has a 30-retry healthcheck and the
 first boot copies all of WordPress into the volume.
@@ -53,6 +55,10 @@ docker compose run --rm wpcli wp --path=/var/www/html plugin deactivate duaais-a
 docker compose run --rm wpcli wp --path=/var/www/html user list --fields=user_login,roles
 docker compose run --rm wpcli wp --path=/var/www/html option get duaais_seed_content_version
 ```
+
+For local email verification, configure **Settings → DUAAIS SMTP** with mailer `Other SMTP`, host
+`mailpit`, port `1025`, no encryption, and no authentication. Send a test email from that screen and
+confirm it appears in Mailpit at <http://localhost:8025>.
 
 `wpcli` runs as uid 33 (`www-data`) against the shared `wordpress_data` volume. Do not add
 `--allow-root`; it is not root.

@@ -7,7 +7,7 @@ description: Ship the DUAAIS theme and plugins to one.com shared hosting over SF
 
 Two very different targets share one payload: `wp-content/themes/duaais`,
 `wp-content/plugins/duaais-anniversary`, `wp-content/plugins/duaais-members`, and
-`wp-content/plugins/duaais-setup`. Nothing else is deployed code. If a change has to reach
+`wp-content/plugins/duaais-setup`, and `wp-content/plugins/duaais-smtp`. Nothing else is deployed code. If a change has to reach
 production, it must land in one of those four directories.
 
 ## Before either deployment

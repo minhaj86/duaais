@@ -19,6 +19,7 @@ payload=(
 	"wp-content/themes/duaais"
 	"wp-content/plugins/duaais-members"
 	"wp-content/plugins/duaais-setup"
+	"wp-content/plugins/duaais-smtp"
 	"wp-content/plugins/duaais-anniversary"
 )
 
@@ -77,9 +78,11 @@ Install them in wp-admin, in this order:
   1. Appearance -> Themes -> Add New -> Upload Theme      duaais-*.zip, then Activate.
   2. Plugins -> Add New -> Upload Plugin                  duaais-members-*.zip, then Activate.
   3. Plugins -> Add New -> Upload Plugin                  duaais-setup-*.zip, then Activate.
-  4. Plugins -> Add New -> Upload Plugin                  duaais-anniversary-*.zip.
-  5. Tools -> DUAAIS setup -> Run DUAAIS setup.
-  6. Activate "DUAAIS Anniversary Flyer" whenever the homepage flyer is needed.
+  4. Plugins -> Add New -> Upload Plugin                  duaais-smtp-*.zip, then Activate.
+  5. Plugins -> Add New -> Upload Plugin                  duaais-anniversary-*.zip.
+  6. Settings -> DUAAIS SMTP -> Configure the mailer and send a test email.
+  7. Tools -> DUAAIS setup -> Run DUAAIS setup.
+  8. Activate "DUAAIS Anniversary Flyer" whenever the homepage flyer is needed.
 
 Uploading a newer archive over an existing install is fine; WordPress asks to replace it.
 NEXT

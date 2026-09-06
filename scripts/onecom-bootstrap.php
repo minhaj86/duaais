@@ -316,7 +316,7 @@ if ( 'activate' === $duaais_step ) {
 
 	switch_theme( 'duaais' );
 
-	foreach ( array( 'duaais-members/duaais-members.php', 'duaais-setup/duaais-setup.php' ) as $plugin ) {
+	foreach ( array( 'duaais-members/duaais-members.php', 'duaais-setup/duaais-setup.php', 'duaais-smtp/duaais-smtp.php' ) as $plugin ) {
 		if ( ! file_exists( WP_PLUGIN_DIR . '/' . $plugin ) ) {
 			duaais_bootstrap_fail( 'the plugin ' . $plugin . ' is missing from wp-content/plugins' );
 		}

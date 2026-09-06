@@ -17,6 +17,14 @@ services:
     volumes:
       - database_data:/var/lib/mysql
 
+  mailpit:
+    image: axllent/mailpit:v1.21.8
+    restart: unless-stopped
+    ports:
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+    environment:
+      MP_MAX_MESSAGES: 100
+
   wordpress:
     image: wordpress:6.8.2-php8.3-apache
     restart: unless-stopped
@@ -47,6 +55,7 @@ services:
       - ./wp-content/plugins/duaais-anniversary:/var/www/html/wp-content/plugins/duaais-anniversary
       - ./wp-content/plugins/duaais-members:/var/www/html/wp-content/plugins/duaais-members
       - ./wp-content/plugins/duaais-setup:/var/www/html/wp-content/plugins/duaais-setup
+      - ./wp-content/plugins/duaais-smtp:/var/www/html/wp-content/plugins/duaais-smtp
 
   wpcli:
     image: wordpress:cli-php8.3
@@ -74,6 +83,7 @@ services:
       - ./wp-content/plugins/duaais-anniversary:/var/www/html/wp-content/plugins/duaais-anniversary
       - ./wp-content/plugins/duaais-members:/var/www/html/wp-content/plugins/duaais-members
       - ./wp-content/plugins/duaais-setup:/var/www/html/wp-content/plugins/duaais-setup
+      - ./wp-content/plugins/duaais-smtp:/var/www/html/wp-content/plugins/duaais-smtp
       - ./scripts:/scripts:ro
 
 volumes:

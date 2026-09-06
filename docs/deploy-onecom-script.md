@@ -2,7 +2,7 @@
 
 one.com is shared hosting. It has no Docker, no Terraform, and no Git deployment, so the container
 image and the Azure configuration in [`infra/terraform`](../infra/terraform) are not used here.
-The site runs as an ordinary WordPress instance and this repository supplies the theme, three
+The site runs as an ordinary WordPress instance and this repository supplies the theme, four
 custom plugins, and the content. This guide uses `scripts/deploy-onecom.sh` over SFTP. For a
 browser-only installation, use the [manual upload guide](deploy-onecom-manual.md).
 
@@ -23,7 +23,7 @@ the Control Panel has to be clicked once by a human. Everything after that is sc
 | Install WordPress core | `--first-run` |
 | Write `wp-config.php` with fresh salts | `--first-run` |
 | Create the database tables and the administrator | `--first-run` |
-| Upload the theme and all three plugins | script |
+| Upload the theme and all four plugins | script |
 | Activate the theme and required plugins | `--first-run` |
 | Show or hide the anniversary flyer | Plugins screen |
 | Seed pages, posts, images, menus, and settings | `--first-run` |
@@ -98,11 +98,11 @@ The script:
 
 1. Probes the site to see whether core, `wp-config.php`, and the database tables already exist.
 2. Uploads a one-time bootstrap file with a random token, `wp-config.php` when it is missing, and
-   the theme and all three plugins — all in a single SFTP session.
+   the theme and all four plugins — all in a single SFTP session.
 3. Tells the server to download and unpack WordPress, verifying the published sha1 checksum. If the
    server cannot reach wordpress.org, the script downloads the archive itself and uploads it.
 4. Creates the database tables and the administrator account.
-5. Activates the DUAAIS theme and the two required plugins. The optional anniversary plugin keeps
+5. Activates the DUAAIS theme and the three required plugins. The optional anniversary plugin keeps
    its existing activation state.
 6. Runs [`seed.php`](../wp-content/plugins/duaais-setup/seed.php), the same seeder that WP-CLI runs
    locally, which creates the pages, posts with featured images, categories, both navigation menus,
@@ -141,8 +141,8 @@ Address.
 ### Email
 
 Membership approvals, rejections, and password resets all depend on outbound mail, and PHP `mail()`
-on shared hosting is unreliable. Create a mailbox in the Control Panel and configure an SMTP plugin
-such as WP Mail SMTP with:
+on shared hosting is unreliable. Create a mailbox in the Control Panel. Open **Settings -> DUAAIS
+SMTP**, select **one.com**, and enter:
 
 | Setting | Value |
 | --- | --- |
@@ -151,6 +151,13 @@ such as WP Mail SMTP with:
 | Encryption | SSL/TLS |
 | Username | the full mailbox address |
 | Password | the mailbox password |
+
+Set **From Email** to the same mailbox, enable SMTP, save, and use **Send a Test Email**. The
+password is encrypted with the WordPress authentication salts before it is stored.
+
+To use Gmail instead, select **Google / Gmail**, enter the full Gmail or Google Workspace address,
+and use a 16-character Google app password. The Google account must have 2-Step Verification
+enabled; its normal password will not work.
 
 Set **Settings → DUAAIS Membership → Notification email** to the address that should receive new
 membership applications. If left blank, the WordPress administration email is used. The

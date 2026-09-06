@@ -1,7 +1,7 @@
 # GitHub Copilot instructions — Dhaka University Alumni Association In Sweden
 
 A containerized WordPress site for Dhaka University Alumni Association In Sweden. This
-repository contains **only** a custom theme and three custom plugins; WordPress core is never
+repository contains **only** a custom theme and four custom plugins; WordPress core is never
 vendored here.
 
 See [`AGENTS.md`](../AGENTS.md) for the full contributor guide. The essentials:
@@ -12,24 +12,25 @@ See [`AGENTS.md`](../AGENTS.md) for the full contributor guide. The essentials:
 - `wp-content/plugins/duaais-anniversary/` — optional 30th anniversary homepage flyer
 - `wp-content/plugins/duaais-members/` — registration, certificate upload, board approval, login
 - `wp-content/plugins/duaais-setup/` — `Tools → DUAAIS setup` screen and `seed.php` content seeder
+- `wp-content/plugins/duaais-smtp/` — SMTP delivery with one.com and Gmail presets
 - `scripts/` — WP-CLI bootstrap, container entrypoint, one.com SFTP deploy
 - `infra/terraform/` — Azure Container Apps deployment
 
-Only the theme and the three plugins are deployable payload. Runtime code must live there, never in
+Only the theme and the four plugins are deployable payload. Runtime code must live there, never in
 `scripts/` alone, because shared hosting never executes `scripts/`.
 
 ## Style
 
 - WordPress Coding Standards. **Tabs** in PHP and shell, two spaces in CSS/JSON/YAML.
 - Procedural PHP with prefixed functions: `duaais_`, `duaais_anniversary_`, `duaais_members_`,
-  `duaais_setup_`, `duaais_seed_`. No classes, namespaces, Composer, or npm.
+  `duaais_setup_`, `duaais_seed_`, `duaais_smtp_`. No classes, namespaces, Composer, or npm.
 - Space inside parentheses: `function duaais_members_status( $user ) {`.
 - Start every PHP file with a docblock and `if ( ! defined( 'ABSPATH' ) ) { exit; }`.
 - Docblock every function with `@param` / `@return`.
 - Escape all output (`esc_html_e`, `esc_html__`, `esc_attr`, `esc_url`); sanitize all input
   (`sanitize_text_field`, `sanitize_email`, `absint`).
 - Text domains match folder names: `duaais`, `duaais-anniversary`, `duaais-members`,
-  `duaais-setup`. All strings are translated and written in English.
+  `duaais-setup`, `duaais-smtp`. All strings are translated and written in English.
 - Use constants for magic values (`DUAAIS_MEMBER_ROLE`, `DUAAIS_CERTIFICATE_MAX_BYTES`, …).
 - Comment *why*, not *what*.
 

@@ -6,6 +6,7 @@ COPY --chown=www-data:www-data wp-content/themes/duaais /usr/src/wordpress/wp-co
 COPY --chown=www-data:www-data wp-content/plugins/duaais-anniversary /usr/src/wordpress/wp-content/plugins/duaais-anniversary
 COPY --chown=www-data:www-data wp-content/plugins/duaais-members /usr/src/wordpress/wp-content/plugins/duaais-members
 COPY --chown=www-data:www-data wp-content/plugins/duaais-setup /usr/src/wordpress/wp-content/plugins/duaais-setup
+COPY --chown=www-data:www-data wp-content/plugins/duaais-smtp /usr/src/wordpress/wp-content/plugins/duaais-smtp
 
 # Members attach a DU certificate copy to their application, which the stock 2M upload limit blocks.
 COPY scripts/php-uploads.ini /usr/local/etc/php/conf.d/duaais-uploads.ini

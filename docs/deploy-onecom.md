@@ -18,6 +18,7 @@ Both methods deploy only:
 - `wp-content/plugins/duaais-anniversary/` (optional; activation controls the homepage flyer)
 - `wp-content/plugins/duaais-members/`
 - `wp-content/plugins/duaais-setup/`
+- `wp-content/plugins/duaais-smtp/`
 
 Choose one guide and follow it through the initial installation. Both guides also cover later
 updates, HTTPS, SMTP, certificate protection, subdirectory installations, and troubleshooting.

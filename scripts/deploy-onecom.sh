@@ -21,6 +21,8 @@ if [ -f "$env_file" ]; then
 fi
 
 ONECOM_PORT="${ONECOM_PORT:-22}"
+ONECOM_HOST="${ONECOM_HOST:-}"
+ONECOM_USER="${ONECOM_USER:-}"
 ONECOM_REMOTE_ROOT="${ONECOM_REMOTE_ROOT:-httpd.www}"
 ONECOM_PASSWORD="${ONECOM_PASSWORD:-}"
 ONECOM_TRUST_HOST_KEY="${ONECOM_TRUST_HOST_KEY:-no}"
@@ -117,6 +119,7 @@ payload=(
 	"wp-content/plugins/duaais-anniversary"
 	"wp-content/plugins/duaais-members"
 	"wp-content/plugins/duaais-setup"
+	"wp-content/plugins/duaais-smtp"
 )
 
 for item in "${payload[@]}"; do
@@ -543,9 +546,10 @@ if [ "$first_run" = "no" ]; then
 
 Upload finished. In wp-admin:
   1. Appearance -> Themes: activate "Dhaka University Alumni Association In Sweden".
-  2. Plugins: activate "DUAAIS Members" and "DUAAIS Setup".
-  3. Tools -> DUAAIS setup: run the content bootstrap.
-  4. Plugins: activate "DUAAIS Anniversary Flyer" when the homepage flyer is needed.
+  2. Plugins: activate "DUAAIS Members", "DUAAIS Setup", and "DUAAIS SMTP Mailer".
+  3. Settings -> DUAAIS SMTP: configure one.com or Gmail and send a test email.
+  4. Tools -> DUAAIS setup: run the content bootstrap.
+  5. Plugins: activate "DUAAIS Anniversary Flyer" when the homepage flyer is needed.
 NEXT
 	exit 0
 fi
@@ -581,7 +585,7 @@ Deactivate it there to hide the flyer.
 
 Still manual, because the one.com Control Panel has no API:
   1. Force HTTPS by adding the redirect to .htaccess in the web root.
-  2. Configure SMTP (send.one.com, port 465, SSL/TLS) so approval emails are delivered.
+  2. Configure and test DUAAIS SMTP under Settings so approval emails are delivered.
   3. Confirm that wp-content/uploads/duaais-certificates/ answers 403 in a browser.
 
 docs/deploy-onecom.md has the details.
