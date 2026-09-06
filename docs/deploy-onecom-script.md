@@ -152,8 +152,9 @@ such as WP Mail SMTP with:
 | Username | the full mailbox address |
 | Password | the mailbox password |
 
-Set **Settings → General → Administration Email Address** to the address that should receive new
-membership applications, or hook the `duaais_members_admin_email` filter.
+Set **Settings → DUAAIS Membership → Notification email** to the address that should receive new
+membership applications. If left blank, the WordPress administration email is used. The
+`duaais_members_admin_email` filter can override either value.
 
 ### Verify the certificate store
 

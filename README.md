@@ -50,9 +50,9 @@ checkbox acts as the electronic signature and is stored together with the applic
 
 1. The applicant submits the form and receives the `Pending Alumni Member` role. Login is blocked
    until the board makes a decision, and the applicant gets a confirmation email.
-2. The address in **Settings → General → Administration Email Address** receives an email with the
-   full application and a link to the review screen. Use the `duaais_members_admin_email` filter to
-   send the notification somewhere else.
+2. The address in **Settings → DUAAIS Membership → Notification email** receives an email with the
+   full application and a link to the review screen. If the field is blank, the WordPress
+   administration email is used. The `duaais_members_admin_email` filter can override either value.
 3. The board reviews applications under **Users → Membership applications**, opens the attached
    certificate, and approves or rejects each application. The **Membership** column on the users
    list shows the status of every account.

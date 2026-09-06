@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DUAAIS Members
  * Description: Front-end registration with DU certificate upload, board approval, login, and profile management for University of Dhaka alumni in Sweden.
- * Version: 1.1.2
+ * Version: 1.2.0
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: Dhaka University Alumni Association In Sweden
@@ -13,9 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DUAAIS_MEMBERS_VERSION = '1.1.2';
-const DUAAIS_MEMBER_ROLE     = 'duaais_alumni';
-const DUAAIS_PENDING_ROLE    = 'duaais_pending';
+const DUAAIS_MEMBERS_VERSION                   = '1.2.0';
+const DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION = 'duaais_members_notification_email';
+const DUAAIS_MEMBER_ROLE                       = 'duaais_alumni';
+const DUAAIS_PENDING_ROLE                      = 'duaais_pending';
 
 const DUAAIS_STATUS_PENDING  = 'pending';
 const DUAAIS_STATUS_APPROVED = 'approved';
@@ -163,19 +164,124 @@ function duaais_members_sync_status_with_role( $user_id, $role ) {
 add_action( 'set_user_role', 'duaais_members_sync_status_with_role', 10, 2 );
 
 /**
+ * Validate the address used for membership application notifications.
+ *
+ * @param mixed $value Submitted setting value.
+ * @return string
+ */
+function duaais_members_sanitize_notification_email( $value ) {
+	$value = is_string( $value ) ? trim( wp_unslash( $value ) ) : '';
+	if ( '' === $value ) {
+		return '';
+	}
+
+	$email = sanitize_email( $value );
+	if ( is_email( $email ) ) {
+		return $email;
+	}
+
+	add_settings_error(
+		DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION,
+		'duaais_members_invalid_notification_email',
+		__( 'Enter a valid application notification email address.', 'duaais-members' )
+	);
+
+	$current = sanitize_email( (string) get_option( DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION, '' ) );
+
+	return is_email( $current ) ? $current : '';
+}
+
+/**
+ * Register the membership notification settings.
+ */
+function duaais_members_register_settings() {
+	register_setting(
+		'duaais_members_settings',
+		DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION,
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'duaais_members_sanitize_notification_email',
+			'default'           => '',
+		)
+	);
+
+	add_settings_section(
+		'duaais_members_notifications',
+		__( 'Application notifications', 'duaais-members' ),
+		'duaais_members_render_notifications_section',
+		'duaais-members-settings'
+	);
+
+	add_settings_field(
+		DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION,
+		__( 'Notification email', 'duaais-members' ),
+		'duaais_members_render_notification_email_field',
+		'duaais-members-settings',
+		'duaais_members_notifications',
+		array(
+			'label_for' => DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION,
+		)
+	);
+}
+add_action( 'admin_init', 'duaais_members_register_settings' );
+
+/**
+ * Explain when application notifications are sent.
+ */
+function duaais_members_render_notifications_section() {
+	?>
+	<p><?php esc_html_e( 'A notification is sent whenever a new membership application is ready for review.', 'duaais-members' ); ?></p>
+	<?php
+}
+
+/**
+ * Render the application notification email field.
+ */
+function duaais_members_render_notification_email_field() {
+	$email       = (string) get_option( DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION, '' );
+	$admin_email = (string) get_option( 'admin_email' );
+	?>
+	<input
+		id="<?php echo esc_attr( DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION ); ?>"
+		name="<?php echo esc_attr( DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION ); ?>"
+		type="email"
+		class="regular-text"
+		value="<?php echo esc_attr( $email ); ?>"
+		placeholder="<?php echo esc_attr( $admin_email ); ?>"
+	>
+	<p class="description">
+		<?php
+		printf(
+			/* translators: %s: WordPress administration email address. */
+			esc_html__( 'Leave blank to use the site administration email: %s', 'duaais-members' ),
+			esc_html( $admin_email )
+		);
+		?>
+	</p>
+	<?php
+}
+
+/**
  * Address used for board notifications about membership applications.
  *
  * @return string
  */
 function duaais_members_admin_email() {
+	$site_admin_email    = sanitize_email( (string) get_option( 'admin_email' ) );
+	$notification_email = sanitize_email( (string) get_option( DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION, '' ) );
+
+	if ( ! is_email( $notification_email ) ) {
+		$notification_email = $site_admin_email;
+	}
+
 	/**
 	 * Filter the address that receives membership application notifications.
 	 *
 	 * @param string $email Notification address.
 	 */
-	$email = (string) apply_filters( 'duaais_members_admin_email', (string) get_option( 'admin_email' ) );
+	$email = (string) apply_filters( 'duaais_members_admin_email', $notification_email );
 
-	return is_email( $email ) ? $email : (string) get_option( 'admin_email' );
+	return is_email( $email ) ? $email : $site_admin_email;
 }
 
 /**
@@ -1664,8 +1770,37 @@ function duaais_members_admin_menu() {
 		'duaais-members-applications',
 		'duaais_members_render_applications_page'
 	);
+
+	add_options_page(
+		__( 'DUAAIS Membership Settings', 'duaais-members' ),
+		__( 'DUAAIS Membership', 'duaais-members' ),
+		'manage_options',
+		'duaais-members-settings',
+		'duaais_members_render_settings_page'
+	);
 }
 add_action( 'admin_menu', 'duaais_members_admin_menu' );
+
+/**
+ * Render the membership settings screen.
+ */
+function duaais_members_render_settings_page() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'You are not allowed to manage membership settings.', 'duaais-members' ) );
+	}
+	?>
+	<div class="wrap">
+		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+		<form action="options.php" method="post">
+			<?php
+			settings_fields( 'duaais_members_settings' );
+			do_settings_sections( 'duaais-members-settings' );
+			submit_button();
+			?>
+		</form>
+	</div>
+	<?php
+}
 
 /**
  * Render the list of applications waiting for approval.
