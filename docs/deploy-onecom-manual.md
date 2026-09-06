@@ -115,7 +115,8 @@ Create a mailbox in the one.com Control Panel and configure an SMTP plugin such 
 
 Set **Settings -> DUAAIS Membership -> Notification email** to the mailbox that should receive new
 membership applications. If left blank, the WordPress administration email is used. The
-`duaais_members_admin_email` filter can override either value.
+`duaais_members_admin_email` filter can override either value. Each notification includes the
+complete non-password form details and the uploaded DU certificate as an attachment.
 
 ### Verify the certificate store
 

@@ -51,13 +51,15 @@ checkbox acts as the electronic signature and is stored together with the applic
 1. The applicant submits the form and receives the `Pending Alumni Member` role. Login is blocked
    until the board makes a decision, and the applicant gets a confirmation email.
 2. The address in **Settings → DUAAIS Membership → Notification email** receives an email with the
-   full application and a link to the review screen. If the field is blank, the WordPress
-   administration email is used. The `duaais_members_admin_email` filter can override either value.
-3. The board reviews applications under **Users → Membership applications**, opens the attached
-   certificate, and approves or rejects each application. The **Membership** column on the users
-   list shows the status of every account.
-4. Approval assigns the `Alumni Member` role and emails the member that they can log in. Rejection
-   removes all roles, keeps the account locked, and emails the applicant.
+   complete non-password form details, the DU certificate as an attachment, and a link to the review
+   screen. If the field is blank, the WordPress administration email is used. The
+   `duaais_members_admin_email` filter can override either value.
+3. Under **Users → Membership applications**, the board can view every pending, approved, or
+   rejected application and open its protected certificate. Pending applications can be approved or
+   rejected there. The **Membership** column on the users list shows the status of every account.
+4. Approval assigns the `Alumni Member` role and emails the member that they can log in and pay the
+   500 SEK membership fee using the attached Swish QR code. Rejection removes all roles, keeps the
+   account locked, and emails the applicant.
 
 Certificates are stored outside the media library in `wp-content/uploads/duaais-certificates/`,
 which denies direct web access through an `.htaccess` file. Only users with the `edit_users`

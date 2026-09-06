@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DUAAIS Members
  * Description: Front-end registration with DU certificate upload, board approval, login, and profile management for University of Dhaka alumni in Sweden.
- * Version: 1.2.0
+ * Version: 1.4.0
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: Dhaka University Alumni Association In Sweden
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const DUAAIS_MEMBERS_VERSION                   = '1.2.0';
+const DUAAIS_MEMBERS_VERSION                   = '1.4.0';
 const DUAAIS_MEMBERS_NOTIFICATION_EMAIL_OPTION = 'duaais_members_notification_email';
 const DUAAIS_MEMBER_ROLE                       = 'duaais_alumni';
 const DUAAIS_PENDING_ROLE                      = 'duaais_pending';
@@ -24,6 +24,9 @@ const DUAAIS_STATUS_REJECTED = 'rejected';
 
 const DUAAIS_CERTIFICATE_DIR       = 'duaais-certificates';
 const DUAAIS_CERTIFICATE_MAX_BYTES = 8388608;
+const DUAAIS_MEMBERSHIP_FEE_SEK     = 500;
+const DUAAIS_MEMBERSHIP_SWISH       = '072-187 50 19';
+const DUAAIS_MEMBERSHIP_PAYMENT_QR  = 'assets/swish-payment-qr.png';
 
 /**
  * Create the member roles without removing existing capabilities on upgrades.
@@ -139,6 +142,22 @@ function duaais_members_status( $user ) {
 }
 
 /**
+ * Translate a membership status into its admin label.
+ *
+ * @param string $status Membership status.
+ * @return string
+ */
+function duaais_members_status_label( $status ) {
+	$labels = array(
+		DUAAIS_STATUS_PENDING  => __( 'Pending approval', 'duaais-members' ),
+		DUAAIS_STATUS_APPROVED => __( 'Approved', 'duaais-members' ),
+		DUAAIS_STATUS_REJECTED => __( 'Rejected', 'duaais-members' ),
+	);
+
+	return isset( $labels[ $status ] ) ? $labels[ $status ] : '';
+}
+
+/**
  * Keep the membership status in step with roles changed from the users screen.
  *
  * @param int    $user_id User whose role changed.
@@ -230,7 +249,7 @@ add_action( 'admin_init', 'duaais_members_register_settings' );
  */
 function duaais_members_render_notifications_section() {
 	?>
-	<p><?php esc_html_e( 'A notification is sent whenever a new membership application is ready for review.', 'duaais-members' ); ?></p>
+	<p><?php esc_html_e( 'A notification with the submitted form details and DU certificate attachment is sent whenever a new membership application is ready for review.', 'duaais-members' ); ?></p>
 	<?php
 }
 
@@ -287,23 +306,35 @@ function duaais_members_admin_email() {
 /**
  * Send a plain-text notification without breaking registration when mail fails.
  *
- * @param string $to      Recipient.
- * @param string $subject Subject line.
- * @param string $message Message body.
+ * @param string                    $to          Recipient.
+ * @param string                    $subject     Subject line.
+ * @param string                    $message     Message body.
+ * @param array<int|string, string> $attachments Files to attach, optionally keyed by display name.
  * @return bool
  */
-function duaais_members_send_mail( $to, $subject, $message ) {
+function duaais_members_send_mail( $to, $subject, $message, $attachments = array() ) {
 	if ( ! is_email( $to ) ) {
 		return false;
 	}
 
-	$sent = wp_mail( $to, $subject, $message, array( 'Content-Type: text/plain; charset=UTF-8' ) );
+	$sent = wp_mail( $to, $subject, $message, array( 'Content-Type: text/plain; charset=UTF-8' ), $attachments );
 
 	if ( ! $sent ) {
 		duaais_members_log( sprintf( 'Unable to send membership email to %s (%s).', $to, $subject ) );
 	}
 
 	return (bool) $sent;
+}
+
+/**
+ * Resolve the bundled Swish QR code used in approval emails.
+ *
+ * @return string Absolute path, or an empty string when the asset is unavailable.
+ */
+function duaais_members_payment_qr_path() {
+	$path = plugin_dir_path( __FILE__ ) . DUAAIS_MEMBERSHIP_PAYMENT_QR;
+
+	return is_readable( $path ) ? $path : '';
 }
 
 /**
@@ -1130,10 +1161,13 @@ function duaais_members_application_summary( $user_id ) {
 		return array();
 	}
 
-	$applied_at = (string) get_user_meta( $user_id, 'duaais_applied_at', true );
+	$applied_at = duaais_members_format_application_date( (string) get_user_meta( $user_id, 'duaais_applied_at', true ) );
+	$consent_at = duaais_members_format_application_date( (string) get_user_meta( $user_id, 'duaais_privacy_consent_at', true ) );
+	$signed_at  = duaais_members_format_application_date( (string) get_user_meta( $user_id, 'duaais_declaration_at', true ) );
 
 	return array(
-		__( 'Name', 'duaais-members' )                       => $user->display_name,
+		__( 'First name', 'duaais-members' )                 => $user->first_name,
+		__( 'Last name', 'duaais-members' )                  => $user->last_name,
 		__( 'Address', 'duaais-members' )                    => (string) get_user_meta( $user_id, 'duaais_address', true ),
 		__( 'Postal code', 'duaais-members' )                => (string) get_user_meta( $user_id, 'duaais_postal_code', true ),
 		__( 'City', 'duaais-members' )                       => (string) get_user_meta( $user_id, 'duaais_city', true ),
@@ -1146,8 +1180,29 @@ function duaais_members_application_summary( $user_id ) {
 		__( 'Residence status in Sweden', 'duaais-members' ) => duaais_members_residence_label( (string) get_user_meta( $user_id, 'duaais_residence_status', true ) ),
 		__( 'Reference in Sweden', 'duaais-members' )        => (string) get_user_meta( $user_id, 'duaais_reference', true ),
 		__( 'DU certificate', 'duaais-members' )             => (string) get_user_meta( $user_id, 'duaais_certificate_name', true ),
-		__( 'Application date', 'duaais-members' )           => $applied_at ? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $applied_at . ' UTC' ) ) : '',
+		__( 'Privacy policy consent', 'duaais-members' )     => $consent_at,
+		__( 'Electronic signature', 'duaais-members' )       => $signed_at,
+		__( 'Application date', 'duaais-members' )           => $applied_at,
 	);
+}
+
+/**
+ * Format a stored UTC application timestamp in the site's timezone.
+ *
+ * @param string $timestamp Stored MySQL timestamp.
+ * @return string
+ */
+function duaais_members_format_application_date( $timestamp ) {
+	if ( '' === $timestamp ) {
+		return '';
+	}
+
+	$unix_timestamp = strtotime( $timestamp . ' UTC' );
+	if ( false === $unix_timestamp ) {
+		return '';
+	}
+
+	return wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $unix_timestamp );
 }
 
 /**
@@ -1200,7 +1255,15 @@ function duaais_members_notify_admin( $user_id ) {
 	$lines[] = __( 'Review the application and the attached DU certificate:', 'duaais-members' );
 	$lines[] = duaais_members_applications_url();
 
-	return duaais_members_send_mail( duaais_members_admin_email(), $subject, implode( "\n", $lines ) );
+	$attachments      = array();
+	$certificate      = duaais_members_certificate_path( $user_id );
+	$certificate_name = sanitize_file_name( (string) get_user_meta( $user_id, 'duaais_certificate_name', true ) );
+
+	if ( $certificate ) {
+		$attachments[ $certificate_name ? $certificate_name : basename( $certificate ) ] = $certificate;
+	}
+
+	return duaais_members_send_mail( duaais_members_admin_email(), $subject, implode( "\n", $lines ), $attachments );
 }
 
 /**
@@ -1753,6 +1816,30 @@ function duaais_members_pending_applications() {
 }
 
 /**
+ * Fetch every stored membership application, including decided applications.
+ *
+ * @return WP_User[]
+ */
+function duaais_members_all_applications() {
+	$query = new WP_User_Query(
+		array(
+			'meta_query' => array(
+				array(
+					'key'     => 'duaais_membership_status',
+					'value'   => array( DUAAIS_STATUS_PENDING, DUAAIS_STATUS_APPROVED, DUAAIS_STATUS_REJECTED ),
+					'compare' => 'IN',
+				),
+			),
+			'orderby'    => 'registered',
+			'order'      => 'DESC',
+			'number'     => -1,
+		)
+	);
+
+	return $query->get_results();
+}
+
+/**
  * Add the board review screen under Users with a pending-count badge.
  */
 function duaais_members_admin_menu() {
@@ -1803,7 +1890,7 @@ function duaais_members_render_settings_page() {
 }
 
 /**
- * Render the list of applications waiting for approval.
+ * Render all membership applications and their certificates.
  */
 function duaais_members_render_applications_page() {
 	if ( ! current_user_can( 'edit_users' ) ) {
@@ -1817,22 +1904,30 @@ function duaais_members_render_applications_page() {
 		'failed'   => array( 'error', __( 'The application could not be updated.', 'duaais-members' ) ),
 	);
 
-	$applications = duaais_members_pending_applications();
+	$applications = duaais_members_all_applications();
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Membership applications', 'duaais-members' ); ?></h1>
-		<p><?php esc_html_e( 'Approve an application to activate the alumni account. Applicants cannot log in until they are approved.', 'duaais-members' ); ?></p>
+		<p><?php esc_html_e( 'View every submitted application and certificate. Pending applicants cannot log in until they are approved.', 'duaais-members' ); ?></p>
 
 		<?php if ( isset( $notices[ $notice ] ) ) : ?>
 			<div class="notice notice-<?php echo esc_attr( $notices[ $notice ][0] ); ?>"><p><?php echo esc_html( $notices[ $notice ][1] ); ?></p></div>
 		<?php endif; ?>
 
 		<?php if ( empty( $applications ) ) : ?>
-			<p><?php esc_html_e( 'There are no applications waiting for approval.', 'duaais-members' ); ?></p>
+			<p><?php esc_html_e( 'There are no membership applications.', 'duaais-members' ); ?></p>
 		<?php else : ?>
 			<?php foreach ( $applications as $applicant ) : ?>
+				<?php
+				$status       = duaais_members_status( $applicant );
+				$status_label = duaais_members_status_label( $status );
+				?>
 				<div class="card" style="max-width:100%;margin-bottom:1.5rem;">
 					<h2><?php echo esc_html( $applicant->display_name ); ?></h2>
+					<p>
+						<strong><?php esc_html_e( 'Status:', 'duaais-members' ); ?></strong>
+						<?php echo esc_html( $status_label ? $status_label : __( 'Unknown', 'duaais-members' ) ); ?>
+					</p>
 					<table class="widefat striped">
 						<tbody>
 						<?php foreach ( duaais_members_application_summary( $applicant->ID ) as $label => $value ) : ?>
@@ -1854,20 +1949,22 @@ function duaais_members_render_applications_page() {
 						<?php endif; ?>
 					</p>
 
-					<div class="duaais-application-actions">
-						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;margin-right:0.5rem;">
-							<input type="hidden" name="action" value="duaais_approve_member">
-							<input type="hidden" name="user_id" value="<?php echo esc_attr( $applicant->ID ); ?>">
-							<?php wp_nonce_field( 'duaais_decide_member_' . $applicant->ID, 'duaais_nonce' ); ?>
-							<button type="submit" class="button button-primary"><?php esc_html_e( 'Approve membership', 'duaais-members' ); ?></button>
-						</form>
-						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;">
-							<input type="hidden" name="action" value="duaais_reject_member">
-							<input type="hidden" name="user_id" value="<?php echo esc_attr( $applicant->ID ); ?>">
-							<?php wp_nonce_field( 'duaais_decide_member_' . $applicant->ID, 'duaais_nonce' ); ?>
-							<button type="submit" class="button button-link-delete"><?php esc_html_e( 'Reject application', 'duaais-members' ); ?></button>
-						</form>
-					</div>
+					<?php if ( DUAAIS_STATUS_PENDING === $status ) : ?>
+						<div class="duaais-application-actions">
+							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;margin-right:0.5rem;">
+								<input type="hidden" name="action" value="duaais_approve_member">
+								<input type="hidden" name="user_id" value="<?php echo esc_attr( $applicant->ID ); ?>">
+								<?php wp_nonce_field( 'duaais_decide_member_' . $applicant->ID, 'duaais_nonce' ); ?>
+								<button type="submit" class="button button-primary"><?php esc_html_e( 'Approve membership', 'duaais-members' ); ?></button>
+							</form>
+							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;">
+								<input type="hidden" name="action" value="duaais_reject_member">
+								<input type="hidden" name="user_id" value="<?php echo esc_attr( $applicant->ID ); ?>">
+								<?php wp_nonce_field( 'duaais_decide_member_' . $applicant->ID, 'duaais_nonce' ); ?>
+								<button type="submit" class="button button-link-delete"><?php esc_html_e( 'Reject application', 'duaais-members' ); ?></button>
+							</form>
+						</div>
+					<?php endif; ?>
 				</div>
 			<?php endforeach; ?>
 		<?php endif; ?>
@@ -1888,7 +1985,7 @@ function duaais_members_verify_decision_request() {
 	$user_id = isset( $_POST['user_id'] ) ? absint( wp_unslash( $_POST['user_id'] ) ) : 0;
 	check_admin_referer( 'duaais_decide_member_' . $user_id, 'duaais_nonce' );
 
-	return $user_id;
+	return DUAAIS_STATUS_PENDING === duaais_members_status( $user_id ) ? $user_id : 0;
 }
 
 /**
@@ -1972,8 +2069,9 @@ function duaais_members_notify_decision( $user_id, $status ) {
 		return false;
 	}
 
-	$site  = wp_specialchars_decode( (string) get_option( 'blogname' ), ENT_QUOTES );
-	$greet = sprintf(
+	$site        = wp_specialchars_decode( (string) get_option( 'blogname' ), ENT_QUOTES );
+	$attachments = array();
+	$greet       = sprintf(
 		/* translators: %s: member first name. */
 		__( 'Hello %s,', 'duaais-members' ),
 		$user->first_name ? $user->first_name : $user->display_name
@@ -1990,7 +2088,22 @@ function duaais_members_notify_decision( $user_id, $status ) {
 			'',
 			__( 'Your Dhaka University Alumni Association In Sweden membership application has been approved. You can now log in with the email address and password you chose when you applied.', 'duaais-members' ),
 			duaais_members_page_url( 'logga-in' ),
+			'',
+			sprintf(
+				/* translators: 1: membership fee amount in SEK, 2: Swish number. */
+				__( 'Please pay the membership fee of %1$d SEK via Swish to %2$s.', 'duaais-members' ),
+				DUAAIS_MEMBERSHIP_FEE_SEK,
+				DUAAIS_MEMBERSHIP_SWISH
+			),
 		);
+
+		$payment_qr = duaais_members_payment_qr_path();
+		if ( $payment_qr ) {
+			$body[] = __( 'Scan the attached Swish QR code to make the payment.', 'duaais-members' );
+			$attachments['DUAAIS-Swish-membership-fee-QR-code.png'] = $payment_qr;
+		} else {
+			duaais_members_log( 'The Swish membership payment QR code is unavailable.' );
+		}
 	} else {
 		$subject = sprintf(
 			/* translators: %s: site name. */
@@ -2009,7 +2122,7 @@ function duaais_members_notify_decision( $user_id, $status ) {
 	$body[] = $site;
 	$body[] = home_url( '/' );
 
-	return duaais_members_send_mail( $user->user_email, $subject, implode( "\n", $body ) );
+	return duaais_members_send_mail( $user->user_email, $subject, implode( "\n", $body ), $attachments );
 }
 
 /**
@@ -2038,27 +2151,22 @@ function duaais_members_users_column_content( $output, $column_name, $user_id ) 
 		return $output;
 	}
 
-	$labels = array(
-		DUAAIS_STATUS_PENDING  => __( 'Pending approval', 'duaais-members' ),
-		DUAAIS_STATUS_APPROVED => __( 'Approved', 'duaais-members' ),
-		DUAAIS_STATUS_REJECTED => __( 'Rejected', 'duaais-members' ),
-	);
-
 	$status = duaais_members_status( $user_id );
-	if ( ! isset( $labels[ $status ] ) ) {
+	$label  = duaais_members_status_label( $status );
+	if ( ! $label ) {
 		return '&mdash;';
 	}
 
 	if ( DUAAIS_STATUS_PENDING === $status ) {
 		return sprintf(
 			'%1$s &middot; <a href="%2$s">%3$s</a>',
-			esc_html( $labels[ $status ] ),
+			esc_html( $label ),
 			esc_url( duaais_members_applications_url() ),
 			esc_html__( 'Review', 'duaais-members' )
 		);
 	}
 
-	return esc_html( $labels[ $status ] );
+	return esc_html( $label );
 }
 add_filter( 'manage_users_custom_column', 'duaais_members_users_column_content', 10, 3 );
 
